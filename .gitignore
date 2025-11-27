@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.local
+.vscode
+*.gen.*
+*.lock
+*.rbxl
+*.rbxlx
+*.rbxm
+*.rbxmx
+Build
+Packages
+Tools
