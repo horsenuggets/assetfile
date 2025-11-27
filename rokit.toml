@@ -1,0 +1,4 @@
+[tools]
+lunefork = "horsenuggets/lune@0.10.5"
+rojo = "rojo-rbx/rojo@7.6.0"
+wally = "upliftgames/wally@0.3.2"
