@@ -40,9 +40,5 @@ else
     echo "Dependency \"rokit\" is already installed."
 fi
 
-# Set ROKIT and ROKIT_TOOLS environment variables
-export ROKIT=$(command -v rokit)
-export ROKIT_TOOLS=$(dirname "$ROKIT")
-
 # Install rokit dependencies
-"$ROKIT" install --no-trust-check
+rokit install --no-trust-check
