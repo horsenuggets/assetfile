@@ -1,0 +1,5 @@
+# Text files
+* text=auto eol=lf
+
+# Binary files
+*.png filter=lfs diff=lfs merge=lfs -text
