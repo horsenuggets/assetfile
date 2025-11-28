@@ -8,6 +8,3 @@ if [ ! -d "./.git/" ]; then
     echo "Ensure that this script is running from the root of the repository."
     exit 1
 fi
-
-# Load RokitSetup script to ensure rokit is installed and set up
-source ./Scripts/Helpers/RokitSetup.unix.sh
