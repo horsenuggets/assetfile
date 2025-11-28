@@ -12,9 +12,9 @@ fi
 # Run RokitSetup script to ensure rokit is installed and set up
 ./Scripts/Helpers/RokitSetup.unix.sh
 
-# Run setup scripts for lunefork and wally
+# Run setup scripts for lunefork and wallyfork
 lunefork setup --no-update-luaurc
-wally install
+wallyfork install
 
 # Iterate over all files in ./Scripts/Actions and create a shell executor for each action
 INITIALIZER_SOURCE=$(cat "./Scripts/Helpers/Initializer.unix.sh")
