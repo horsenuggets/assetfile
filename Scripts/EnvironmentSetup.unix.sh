@@ -12,9 +12,9 @@ fi
 # Run RokitSetup script to ensure rokit is installed and set up
 ./Scripts/Helpers/RokitSetup.unix.sh
 
-# Run setup scripts for lunefork and wallyfork
-lunefork setup --no-update-luaurc
-wallyfork install
+# Run setup scripts for lune and wally
+lune setup --no-update-luaurc
+wally install
 
 # Iterate over all files in ./Scripts/Actions and create a shell executor for each action
 INITIALIZER_SOURCE=$(cat "./Scripts/Helpers/Initializer.unix.sh")
@@ -23,8 +23,8 @@ for luau_action_file in ./Scripts/Actions/*; do
     SHELL_EXECUTOR_PATH="./Scripts/$ACTION_NAME.gen.unix.sh"
 
     printf "$INITIALIZER_SOURCE\n\n" > $SHELL_EXECUTOR_PATH
-    printf "# Run the $ACTION_NAME script using lunefork\n" >> $SHELL_EXECUTOR_PATH
-    printf "lunefork run ./Scripts/Actions/${ACTION_NAME}.luau \"\$@\"\n" >> $SHELL_EXECUTOR_PATH
+    printf "# Run the $ACTION_NAME script using lune\n" >> $SHELL_EXECUTOR_PATH
+    printf "lune run ./Scripts/Actions/${ACTION_NAME}.luau \"\$@\"\n" >> $SHELL_EXECUTOR_PATH
 
     chmod +x $SHELL_EXECUTOR_PATH
 done

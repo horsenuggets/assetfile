@@ -8,7 +8,7 @@ local function buildCli()
         fs.makeDir("./Build/")
     end
 
-    process.exec("lunefork", {
+    process.exec("lune", {
         "build",
         "./Source/Commandline/AssetfileCli.luau",
         "-o",
