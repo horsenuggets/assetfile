@@ -13,7 +13,6 @@ fi
 
 # Add a directory to PATH if it's not already there, and also adds it to .bashrc or .zshrc
 add_to_path() {
-
     # If no argument is provided, exit with error
     if [ -z "$1" ]; then
         echo "No directory provided to \"add_to_path()\" function."
