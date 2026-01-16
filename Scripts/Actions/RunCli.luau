@@ -2,22 +2,15 @@
 
 require("../Helpers/AssertCwdIsRoot")()
 
-local fs = require("@lune/fs")
 local process = require("@lune/process")
 
-local function buildCli()
-    if not fs.isDir("./Build/") then
-        fs.makeDir("./Build/")
-    end
-
+local function runCli()
     process.exec("lune", {
-        "build",
+        "run",
         "./Source/Commandline/AssetfileCli.luau",
-        "-o",
-        "./Build/assetfile",
     }, {
         stdio = "forward",
     })
 end
 
-buildCli()
+runCli()

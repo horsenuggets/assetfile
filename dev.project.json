@@ -1,0 +1,12 @@
+{
+    "name": "assetfile",
+    "tree": {
+        "$path": "Source/Assetfile",
+        "DevPackages": {
+            "$path": "DevPackages"
+        },
+        "Packages": {
+            "$path": "Packages"
+        }
+    }
+}

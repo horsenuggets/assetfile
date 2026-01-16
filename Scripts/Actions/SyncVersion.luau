@@ -1,3 +1,5 @@
+#!/usr/bin/env -S lune run
+
 require("../Helpers/AssertCwdIsRoot")()
 
 local fs = require("@lune/fs")
