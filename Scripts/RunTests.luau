@@ -46,6 +46,7 @@ local function runTests()
         end
     end
 
+    Testable.configure({ Parallel = false })
     local _, passed = Testable.run(testsToRun)
     process.exit(if passed then 0 else 1)
 end

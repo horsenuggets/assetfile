@@ -55,7 +55,6 @@ local function patchRelativeRequires(): { FileBackup }
         local content = fs.readFile(filePath)
         local originalContent = content
         local modified = false
-        local fileName = filePath:match("([^/]+)$") or ""
         local fileDir = getParentDir(projectRelPath)
 
         -- Replace @self requires (used in init.luau files)

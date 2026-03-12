@@ -28,6 +28,8 @@ export type ApiKeyStore = {
     List: (self: ApiKeyStore) -> { StoredKey },
     Remove: (self: ApiKeyStore, name: string) -> boolean,
     RemoveAll: (self: ApiKeyStore) -> number,
+    _loadKeys: (self: ApiKeyStore) -> { StoredKey },
+    _saveKeys: (self: ApiKeyStore, keys: { StoredKey }) -> (),
 }
 
 local ApiKeyStore = {}

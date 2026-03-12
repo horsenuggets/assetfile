@@ -43,6 +43,7 @@ export type UploadResult = {
 
 export type RobloxApi = {
     Upload: (self: RobloxApi, request: UploadRequest) -> UploadResult,
+    _pollOperation: (self: RobloxApi, operationId: string) -> UploadResult,
 }
 
 local ASSET_TYPE_MAP: { [string]: AssetType } = {

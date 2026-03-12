@@ -17,16 +17,35 @@ local removeDirectory = require("./Helpers/removeDirectory")
 
 local BASE_NAME = "cli"
 local BINARY_PATH = `{process.cwd}Build/assetfile`
+local ENTRY_POINT = `{process.cwd}Source/Commandline/AssetfileCli.luau`
 
 return function()
     beforeAll(function()
-        -- Build the CLI binary
-        process.exec("lune", {
+        -- Strip shebang for building (lune build doesn't support
+        -- shebangs). Temp file goes in same directory so relative
+        -- requires resolve correctly.
+        local entryContent = fs.readFile(ENTRY_POINT)
+        local entryDir = ENTRY_POINT:match("(.*/)") or ""
+        local tempEntryPoint = `{entryDir}_build_entry.luau`
+        local strippedContent = entryContent:gsub("^#![^\n]*\n", "")
+        fs.writeFile(tempEntryPoint, strippedContent)
+
+        if not fs.isDir(`{process.cwd}Build`) then
+            fs.writeDir(`{process.cwd}Build`)
+        end
+
+        local result = process.exec("lune", {
             "build",
-            `{process.cwd}Source/Commandline/AssetfileCli.luau`,
+            tempEntryPoint,
             "-o",
             BINARY_PATH,
         })
+
+        if fs.isFile(tempEntryPoint) then
+            fs.removeFile(tempEntryPoint)
+        end
+
+        assert(result.ok, `Failed to build CLI binary: {result.stderr}`)
         assert(fs.isFile(BINARY_PATH), "Failed to build CLI binary.")
     end)
 
