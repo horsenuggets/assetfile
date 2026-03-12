@@ -1,6 +1,10 @@
+.assetfile-cache.json
+.claude
 .DS_Store
 .env
 .local
+.mcp.json
+.test*
 .vscode
 *.bak
 *.gen.*
@@ -9,7 +13,9 @@
 *.rbxlx
 *.rbxm
 *.rbxmx
+aftman.toml
 Build
+DevPackages
 Packages
 sourcemap.json
 Tools

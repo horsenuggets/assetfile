@@ -1,12 +1,21 @@
 {
-    "name": "assetfile",
+    "name": "assetfile-dev",
     "tree": {
-        "$path": "Source/Assetfile",
+        "$className": "Folder",
         "DevPackages": {
             "$path": "DevPackages"
         },
         "Packages": {
             "$path": "Packages"
+        },
+        "Scripts": {
+            "$path": "Scripts"
+        },
+        "Source": {
+            "$path": "Source"
+        },
+        "Tests": {
+            "$path": "Tests"
         }
     }
 }
