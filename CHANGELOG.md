@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.2
+- Fixed release artifacts to use zip archives for Rokit compatibility
+- Fixed release checks to use forked luau-lsp with --platform lune
+- Updated luau-cicd submodule with forked luau-lsp support
+
 ## 0.0.1
 - Added sync and watch commands for uploading assets via Roblox Open Cloud API
 - Added init command for scaffolding assetfile.json configuration
