@@ -1,0 +1,141 @@
+name: Release checks
+
+on:
+  pull_request:
+    branches:
+      - release
+
+jobs:
+  pr-title:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title format
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          echo "Checking PR title: $TITLE"
+
+          # Must be exactly "Release X.Y.Z"
+          if [[ ! "$TITLE" =~ ^Release\ [0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::PR title must be exactly 'Release X.Y.Z' (e.g., 'Release 1.2.3')"
+            exit 1
+          fi
+
+          echo "PR title is valid."
+
+  diff-check:
+    name: Verify diff matches main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check diff with main
+        run: |
+          git fetch origin main
+
+          # Get the diff between the PR branch and main
+          DIFF=$(git diff origin/main..HEAD)
+
+          if [ -n "$DIFF" ]; then
+            echo "::error::PR branch has changes that differ from main. The release branch must contain exactly what is in main."
+            echo "Diff:"
+            echo "$DIFF"
+            exit 1
+          fi
+
+          echo "PR branch matches main exactly."
+
+  format:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Check formatting
+        run: lune run ./Submodules/luau-cicd/Scripts/CheckFormatting.luau
+
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Install dependencies
+        run: wally install
+
+      - name: Run tests
+        run: lune run ./Scripts/RunTests.luau
+
+  analyze:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Install dependencies
+        run: wally install
+
+      - name: Setup Lune typedefs
+        run: lune setup --no-update-luaurc
+
+      - name: Run static analysis
+        run: lune run ./Submodules/luau-cicd/Scripts/RunStaticAnalysis.luau
+
+  version:
+    name: Validate version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Check version update
+        run: lune run ./Submodules/luau-cicd/Scripts/EnsureProperVersionUpdate.luau
+
+      - name: Check version match
+        run: lune run ./Submodules/luau-cicd/Scripts/CheckVersionMatch.luau
+
+      - name: Check changelog entry
+        run: lune run ./Submodules/luau-cicd/Scripts/CheckChangelogVersion.luau
+
+      - name: Check changelog format
+        run: lune run ./Submodules/luau-cicd/Scripts/CheckChangelogFormat.luau
+
+      - name: Verify PR title matches VERSION
+        run: |
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          EXPECTED_TITLE="Release $VERSION"
+          ACTUAL_TITLE="${{ github.event.pull_request.title }}"
+
+          if [ "$EXPECTED_TITLE" != "$ACTUAL_TITLE" ]; then
+            echo "::error::PR title '$ACTUAL_TITLE' does not match VERSION file. Expected '$EXPECTED_TITLE'"
+            exit 1
+          fi
+
+          echo "PR title matches VERSION file."
