@@ -34,19 +34,21 @@ jobs:
       - name: Build executable
         run: lune run Scripts/BuildCli.luau ${{ matrix.target }}
 
-      - name: Rename binary
+      - name: Package binary
         run: |
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          cd Build
           if [[ "${{ matrix.target }}" == windows-* ]]; then
-            mv Build/assetfile.exe Build/assetfile-${{ matrix.target }}.exe
+            zip "assetfile-${VERSION}-${{ matrix.target }}.zip" assetfile.exe
           else
-            mv Build/assetfile Build/assetfile-${{ matrix.target }}
+            zip "assetfile-${VERSION}-${{ matrix.target }}.zip" assetfile
           fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: assetfile-${{ matrix.target }}
-          path: Build/assetfile-${{ matrix.target }}*
+          path: Build/assetfile-*.zip
 
   release:
     name: Create release
