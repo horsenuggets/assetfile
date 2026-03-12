@@ -1,94 +1,249 @@
+#!/usr/bin/env -S lune run
+
+--[[
+
+AssetfileCli
+
+Entry point for the Assetfile CLI. Registers all commands and executes
+the command line.
+
+--]]
+
 local fs = require("@lune/fs")
-local net = require("@lune/net")
 local process = require("@lune/process")
 local serde = require("@lune/serde")
-local task = require("@lune/task")
+local stdio = require("@lune/stdio")
 
-local Dotenv = require("@packages/Dotenv")
+local Commandline = require("@packages/Commandline")
 
-local function main()
-    Dotenv.load()
+local ApiKeyStore = require("@assetfile/ApiKeyStore")
+local Config = require("@assetfile/Config")
+local Sync = require("@assetfile/Sync")
+local Watcher = require("@assetfile/Watcher")
 
-    local robloxApiKey = process.env.ROBLOX_API_KEY
-    local assetsToUpload = {} :: { { Name: string, Path: string } }
+local VERSION
+do
+    local ok, content = pcall(fs.readFile, "./VERSION")
+    VERSION = if ok then (content:gsub("%s+", "")) else "0.0.0"
+end
 
-    for _, fileName in fs.readDir(process.cwd) do
-        -- If the file ends with .png, add it to assetPaths
-        if fileName:sub(-4):lower() == ".png" then
-            table.insert(assetsToUpload, {
-                Name = fileName,
-                Path = `{process.cwd}{fileName}`,
-            })
-        end
+local function resolveApiKey(): string
+    -- Check environment variable first
+    local envKey = process.env.ROBLOX_API_KEY
+    if envKey and #envKey > 0 then
+        return envKey
     end
 
-    for _, assetData in assetsToUpload do
-        print(assetData)
+    -- Check stored keys
+    local stored = ApiKeyStore.get()
+    if stored then
+        return stored.key
+    end
 
-        local jsonRequest = serde.encode("json", {
-            assetType = "Decal",
-            displayName = assetData.Name,
-            description = "Uploaded by Assetfile.",
-            creationContext = {
-                creator = {
-                    userId = "35493303",
+    error("No API key found. Set the ROBLOX_API_KEY environment variable" .. ' or run "assetfile api-key add".')
+end
+
+-- sync command
+
+local syncCommand = Commandline.Command.new({
+    Name = "sync",
+    Description = "Sync assets to Roblox once and exit.",
+    Impl = function(_args: any, _flags: any)
+        assert(Config.exists(), "No assetfile.json found in current directory.")
+        local config = Config.load()
+        local apiKey = resolveApiKey()
+
+        local totalUploaded = 0
+        local totalUpdated = 0
+        local totalRemoved = 0
+        local totalFailed = 0
+
+        for _, mapping in config.mappings do
+            local result = Sync.run(mapping, apiKey)
+            totalUploaded += result.Uploaded
+            totalUpdated += result.Updated
+            totalRemoved += result.Removed
+            totalFailed += result.Failed
+        end
+
+        print(
+            `\n{stdio.style("bold")}Sync complete.{stdio.style("reset")}`
+                .. ` {totalUploaded} uploaded, {totalUpdated} updated,`
+                .. ` {totalRemoved} removed, {totalFailed} failed.`
+        )
+
+        if totalFailed > 0 then
+            process.exit(1)
+        end
+    end,
+})
+
+-- watch command
+
+local watchCommand = Commandline.Command.new({
+    Name = "watch",
+    Description = "Watch asset directories and sync changes automatically.",
+    Flags = {
+        Commandline.Flag.new({
+            Name = "interval",
+            Description = "Poll interval in seconds.",
+            Type = "number",
+            Shorthand = "i",
+            Default = 2,
+        }),
+    },
+    Impl = function(_args: any, flags: any)
+        assert(Config.exists(), "No assetfile.json found in current directory.")
+        local config = Config.load()
+        local apiKey = resolveApiKey()
+
+        Watcher.watch(config.mappings, apiKey, flags.interval.Value)
+    end,
+})
+
+-- init command
+
+local initCommand = Commandline.Command.new({
+    Name = "init",
+    Description = "Create a new assetfile.json configuration file.",
+    Impl = function(_args: any, _flags: any)
+        if Config.exists() then
+            print("assetfile.json already exists.")
+            return
+        end
+
+        local userId = stdio.prompt("text", "Roblox user ID")
+        assert(#userId > 0, "User ID must not be empty.")
+
+        local assetsDir = stdio.prompt("text", 'Assets directory ("assets" if blank)')
+        if #assetsDir == 0 then
+            assetsDir = "assets"
+        end
+
+        local outputPath = stdio.prompt("text", 'Output Luau file ("Assets.luau" if blank)')
+        if #outputPath == 0 then
+            outputPath = "Assets.luau"
+        end
+
+        local config = {
+            mappings = {
+                {
+                    assets = assetsDir,
+                    output = outputPath,
+                    creator = {
+                        userId = userId,
+                    },
                 },
             },
-        })
-
-        local uploadArgs = {
-            "--location",
-            "https://apis.roblox.com/assets/v1/assets",
-            "--header",
-            `x-api-key: {robloxApiKey}`,
-            "--form",
-            `request={jsonRequest}`,
-            "--form",
-            `fileContent=@"{assetData.Path}";type=image/png`,
         }
 
-        local uploadResult = process.exec("curl", uploadArgs)
-        local operationId = serde.decode("json", uploadResult.stdout).operationId
+        fs.writeFile("assetfile.json", serde.encode("json", config))
+        print(`Created assetfile.json with assets directory "{assetsDir}".`)
 
-        local checkArgs = {
-            "--location",
-            `https://apis.roblox.com/assets/v1/operations/{operationId}`,
-            "--header",
-            `x-api-key: {robloxApiKey}`,
-        }
+        if not fs.isDir(assetsDir) then
+            fs.writeDir(assetsDir)
+            print(`Created directory "{assetsDir}".`)
+        end
+    end,
+})
 
-        local maxAttempts = 5
-        local attempt = 0
-        local success = false
-        local response
+-- api-key commands
 
-        while task.wait(1) do
-            attempt += 1
-            if attempt > maxAttempts then
-                print("Max attempts reached for checking upload status.")
-                break
-            end
-
-            local checkResult = process.exec("curl", checkArgs)
-            response = serde.decode("json", checkResult.stdout)
-
-            if response.done then
-                success = true
-                break
-            end
-
-            print("Waiting for upload to complete... Attempt: " .. attempt)
+local apiKeyAddCommand = Commandline.Command.new({
+    Name = "add",
+    Description = "Add a Roblox API key.",
+    Impl = function(_args: any, _flags: any)
+        local name = stdio.prompt("text", 'Key name ("default" if blank)')
+        if #name == 0 then
+            name = "default"
         end
 
-        if not success then
-            print("Failed to upload texture after " .. maxAttempts .. " attempts.")
-            break
+        local key = stdio.prompt("password", "API key")
+        assert(#key > 0, "API key must not be empty.")
+
+        ApiKeyStore.add(name, key)
+        print(`API key "{name}" added successfully.`)
+    end,
+})
+
+local apiKeyListCommand = Commandline.Command.new({
+    Name = "list",
+    Description = "List all stored API keys.",
+    Impl = function(_args: any, _flags: any)
+        local keys = ApiKeyStore.list()
+        if #keys == 0 then
+            print("No API keys stored.")
+            return
         end
 
-        local assetId = response.response.assetId
+        print(`{#keys} stored API {if #keys == 1 then "key" else "keys"}:`)
+        for _, stored in keys do
+            local masked = stored.key:sub(1, 8) .. "..."
+            print(`  {stored.name} ({masked})`)
+        end
+    end,
+})
 
-        print("Upload completed successfully. Asset ID: " .. assetId)
+local apiKeyRemoveCommand = Commandline.Command.new({
+    Name = "remove",
+    Description = "Remove a stored API key.",
+    Flags = {
+        Commandline.Flag.new({
+            Name = "all",
+            Description = "Remove all stored API keys.",
+        }),
+    },
+    Impl = function(_args: any, flags: any)
+        if flags.all.Value then
+            local count = ApiKeyStore.removeAll()
+            print(`Removed {count} API {if count == 1 then "key" else "keys"}.`)
+            return
+        end
+
+        local name = stdio.prompt("text", "Key name to remove")
+        assert(#name > 0, "Key name must not be empty.")
+
+        local removed = ApiKeyStore.remove(name)
+        if removed then
+            print(`API key "{name}" removed.`)
+        else
+            print(`No API key found with name "{name}".`)
+        end
+    end,
+})
+
+local apiKeyCommand = Commandline.Command.new({
+    Name = "api-key",
+    Description = "Manage Roblox API keys.",
+    Subcommands = {
+        apiKeyAddCommand,
+        apiKeyListCommand,
+        apiKeyRemoveCommand,
+    },
+})
+
+-- root command
+
+local rootCommand = Commandline.Command.new({
+    Name = "assetfile",
+    Description = "Finally, a way to work with Roblox assets local to your computer.",
+    Version = VERSION,
+    Subcommands = {
+        apiKeyCommand,
+        initCommand,
+        syncCommand,
+        watchCommand,
+    },
+})
+
+local function assetfileCli()
+    Commandline.registerCommand(rootCommand)
+
+    local ok, err = pcall(Commandline.execute, "assetfile " .. table.concat(process.args, " "))
+    if not ok then
+        stdio.ewrite(`{err}\n`)
+        process.exit(1)
     end
 end
 
-main()
+assetfileCli()

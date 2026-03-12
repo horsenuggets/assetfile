@@ -4,99 +4,119 @@ Finally, a way to work with Roblox assets local to your computer.
 
 ## Overview
 
-In many game development environments outside of Roblox, assets such as images, sounds, and 3D models are stored as literal project files tracked with version control. Roblox, in contrast, works such that developers manually upload assets to the platform, which are then referenced by their unique asset IDs. If you want to change an asset, you have to reupload it, get a new asset ID, and update the references.
+In many game development environments outside of Roblox, assets such as images, sounds, and
+3D models are stored as literal project files tracked with version control. Roblox, in
+contrast, requires developers to manually upload assets to the platform, then reference them
+by unique asset IDs. If you want to change an asset, you have to reupload it, get a new ID,
+and update every reference.
 
-Assetfile allows you to sync a local directory of assets with Roblox, automating the upload process and managing asset IDs. This way, you can keep your assets in version control, make changes locally, and have those changes reflected in your Roblox projects seamlessly.
+Assetfile automates this. Point it at a local directory of assets, and it uploads them to
+Roblox via the Open Cloud API, generates a Luau module mapping file paths to asset IDs, and
+keeps everything in sync as files change.
 
 ## Installation
 
-There are 2 parts to Assetfile: the CLI tool, and the Roblox Studio plugin. The CLI tool tracks your local directory and sends information to the Roblox Studio plugin, which stores filepath to asset ID mappings in a Luau module that your game can require.
-
-### CLI Tool
-
-You can install the CLI tool either by [downloading the binary directly](), or by running one of the following commands in a terminal window based on your platform:
-
-#### Unix (Linux / macOS)
+Install assetfile with [Rokit](https://github.com/rojo-rbx/rokit):
 
 ```
-<unix-install-command>
+rokit add horsenuggets/assetfile
 ```
 
-#### Windows
+## Getting Started
+
+### 1. Add an API Key
+
+A Roblox Open Cloud API key with the `asset:write` permission is required. Create one at the
+[Creator Dashboard](https://create.roblox.com/dashboard/credentials), then store it with
+assetfile:
 
 ```
-<windows-install-command>
+assetfile api-key add
 ```
 
-### Roblox Studio Plugin
+API keys are stored locally in `~/.assetfile/` and are never written to project files. You
+can also set the `ROBLOX_API_KEY` environment variable instead (useful for CI).
 
-You can install the Roblox Studio plugin by downloading the `*.rbxm` directly from the [releases page]() and moving it to your Roblox Studio plugins folder, or by [adding it through the Creator Hub]().
+### 2. Initialize a Project
 
-## Usage
-
-### Adding a Roblox API Key
-
-A Roblox Open Cloud API key with the `asset:write` permission is needed in order to sync assets. An API key can be created [here](https://create.roblox.com/dashboard/credentials).
-
-Then, add the API key to Assetfile:
+Run `assetfile init` in your project directory to create an `assetfile.json` config file:
 
 ```
-> assetfile api-key add
-What would you like to name this API key ("default" if unspecified)? my-api-key
-What are the contents of your API key? *****
-API key "my-api-key" added successfully.
+assetfile init
 ```
 
-### Syncing Assets
+This creates an `assetfile.json` that maps a local asset directory to an output Luau module:
 
-Let's say you have a directory of assets you want to use:
-
-```
-/path/to/your/assets
-├─ BackgroundMusic.mp3
-├─ Skybox.png
-├─ SoundEffects/
-│  ├─ Hit.wav
-│  └─ Jump.wav
-└─ Models/
-   ├─ Tree.fbx
-   └─ Rock.fbx
-```
-
-You can run the following command to start watching the directory and syncing assets:
-
-```
-> assetfile watch /path/to/your/assets --out Assets.luau
-Watching directory "/path/to/your/assets"...
-```
-
-After running the command, Assetfile will upload the assets to Roblox and generate an `Assets.luau` file that looks like this:
-
-```lua
--- Assets.luau
-return {
-    ["BackgroundMusic.mp3"] = "rbxassetid://1234567890",
-    ["Skybox.png"] = "rbxassetid://2345678901",
-    ["SoundEffects/Hit.wav"] = "rbxassetid://3456789012",
-    ["SoundEffects/Jump.wav"] = "rbxassetid://4567890123",
-    ["Models/Tree.fbx"] = "rbxassetid://5678901234",
-    ["Models/Rock.fbx"] = "rbxassetid://6789012345",
+```json
+{
+    "mappings": [
+        {
+            "assets": "assets",
+            "output": "Assets.luau",
+            "creator": {
+                "userId": "12345"
+            }
+        }
+    ]
 }
 ```
 
-If the contents of any asset change, Assetfile will automatically reupload the asset and update the asset ID in the `Assets.luau` file.
+The `creator` field specifies who owns the uploaded assets. Use `userId` for personal
+uploads or `groupId` for group-owned assets. This file should be committed to version control.
 
-Using the Roblox Studio plugin, you can also sync local asset directories with ModuleScripts.
+### 3. Sync Assets
 
-Here is an example of how to use the generated `Assets.luau` module in your game code!
+Place your asset files in the configured directory, then run:
 
-```lua
--- Load the Assets module
+```
+assetfile sync
+```
+
+Or watch for changes continuously:
+
+```
+assetfile watch
+```
+
+Assetfile uploads new and changed files, removes stale entries, and generates a Luau module:
+
+```luau
+return {
+    ["BackgroundMusic.mp3"] = "rbxassetid://1234567890",
+    ["Models/Rock.fbx"] = "rbxassetid://6789012345",
+    ["Models/Tree.fbx"] = "rbxassetid://5678901234",
+    ["Skybox.png"] = "rbxassetid://2345678901",
+    ["SoundEffects/Hit.wav"] = "rbxassetid://3456789012",
+    ["SoundEffects/Jump.wav"] = "rbxassetid://4567890123",
+}
+```
+
+Use it in your game code:
+
+```luau
 local Assets = require(ReplicatedStorage.Assets)
 
--- Use the BackgroundMusic.mp3 asset
 local backgroundMusic = Instance.new("Sound")
 backgroundMusic.SoundId = Assets["BackgroundMusic.mp3"]
 backgroundMusic.Parent = workspace
 backgroundMusic:Play()
 ```
+
+## Supported File Types
+
+| Type  | Extensions                          |
+| ----- | ----------------------------------- |
+| Image | bmp, gif, jpeg, jpg, png, tga, webp |
+| Audio | flac, mp3, ogg, wav                 |
+| Model | fbx, glb, gltf, rbxm, rbxmx        |
+
+## Commands
+
+| Command                    | Description                              |
+| -------------------------- | ---------------------------------------- |
+| `assetfile init`           | Create a new assetfile.json config file  |
+| `assetfile sync`           | Sync assets to Roblox once and exit      |
+| `assetfile watch`          | Watch for changes and sync automatically |
+| `assetfile api-key add`    | Add a Roblox API key                     |
+| `assetfile api-key list`   | List stored API keys                     |
+| `assetfile api-key remove` | Remove a stored API key                  |
