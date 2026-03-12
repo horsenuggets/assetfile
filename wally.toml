@@ -1,10 +1,18 @@
 [package]
 name = "horsenuggets/assetfile"
-version = "0.0.0"
-registry = "https://github.com/UpliftGames/wally-index"
+description = "Finally, a way to work with Roblox assets local to your computer."
+version = "0.0.1"
+private = true
+license = "MIT"
 realm = "shared"
+registry = "https://github.com/UpliftGames/wally-index"
+repository = "https://github.com/horsenuggets/assetfile"
 
 [dependencies]
-Chalk = "horsenuggets/chalk-luau@0.0.0"
+Commandline = "horsenuggets/commandline-luau@0.0.11"
 Dotenv = "horsenuggets/dotenv-luau@0.0.2"
-Fusion = "elttob/fusion@0.3.0"
+HashLib = "horsenuggets/hashlib@0.0.2"
+t = "horsenuggets/t@3.1.1-horse.0.3"
+
+[dev-dependencies]
+Testable = "horsenuggets/testable@0.1.0"

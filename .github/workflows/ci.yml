@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  format:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Check formatting
+        run: lune run ./Submodules/luau-cicd/Scripts/CheckFormatting.luau
+
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Install dependencies
+        run: wally install
+
+      - name: Run tests
+        run: lune run ./Scripts/RunTests.luau
+
+  analyze:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Install dependencies
+        run: wally install
+
+      - name: Setup Lune typedefs
+        run: lune setup --no-update-luaurc
+
+      - name: Run static analysis
+        run: luau-lsp analyze --platform lune --ignore "DevPackages/**" --ignore "Packages/**" --ignore "Submodules/**" .
