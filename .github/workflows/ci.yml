@@ -54,5 +54,8 @@ jobs:
       - name: Install dependencies
         run: wally install
 
+      - name: Setup Lune typedefs
+        run: lune setup --no-update-luaurc
+
       - name: Run static analysis
         run: luau-lsp analyze --platform lune --ignore "DevPackages/**" --ignore "Packages/**" --ignore "Submodules/**" .
