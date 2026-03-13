@@ -14,6 +14,7 @@ local process = require("@lune/process")
 local serde = require("@lune/serde")
 local stdio = require("@lune/stdio")
 
+local Chalk = require("@packages/Chalk")
 local Commandline = require("@packages/Commandline")
 local Dotenv = require("@packages/Dotenv")
 
@@ -59,7 +60,7 @@ local syncCommand = Commandline.Command.new({
         end
 
         print(
-            `\n{stdio.style("bold")}Sync complete.{stdio.style("reset")}`
+            `\n{Chalk.bold("Sync complete.")}`
                 .. ` {totalUploaded} uploaded, {totalUpdated} updated,`
                 .. ` {totalRemoved} removed, {totalFailed} failed.`
         )
