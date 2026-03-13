@@ -24,16 +24,17 @@ local Watcher = require("@assetfile/Watcher")
 
 local VERSION = "0.0.2"
 
-local function resolveApiKey(): string
+local function resolveApiKey(envName: string?): string
     pcall(Dotenv.load)
 
-    local apiKey = process.env.ROBLOX_API_KEY
+    local name = envName or "ROBLOX_API_KEY"
+    local apiKey = process.env[name]
 
     if apiKey and #apiKey > 0 then
         return apiKey
     end
 
-    error("No API key found. Set ROBLOX_API_KEY in your .env" .. " file or as an environment variable.")
+    error(`No API key found. Set {name} in your .env file or as an environment variable.`)
 end
 
 -- sync command
@@ -44,7 +45,6 @@ local syncCommand = Commandline.Command.new({
     Impl = function(_args: any, _flags: any)
         assert(Config.exists(), "No assetfile.json found in current directory.")
         local config = Config.load()
-        local apiKey = resolveApiKey()
 
         local totalUploaded = 0
         local totalUpdated = 0
@@ -52,6 +52,7 @@ local syncCommand = Commandline.Command.new({
         local totalFailed = 0
 
         for _, mapping in config.mappings do
+            local apiKey = resolveApiKey(mapping.apiKeyEnvName)
             local result = Sync.run(mapping, apiKey)
             totalUploaded += result.Uploaded
             totalUpdated += result.Updated
@@ -88,9 +89,14 @@ local watchCommand = Commandline.Command.new({
     Impl = function(_args: any, flags: any)
         assert(Config.exists(), "No assetfile.json found in current directory.")
         local config = Config.load()
-        local apiKey = resolveApiKey()
 
-        Watcher.watch(config.mappings, apiKey, flags.interval.Value)
+        -- Validate all API keys upfront before starting the watcher
+        local apiKeys: { [number]: string } = {}
+        for i, mapping in config.mappings do
+            apiKeys[i] = resolveApiKey(mapping.apiKeyEnvName)
+        end
+
+        Watcher.watch(config.mappings, apiKeys, flags.interval.Value)
     end,
 })
 
