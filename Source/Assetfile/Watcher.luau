@@ -10,9 +10,9 @@ hashing file contents on every poll.
 --]]
 
 local fs = require("@lune/fs")
-local stdio = require("@lune/stdio")
 local task = require("@lune/task")
 
+local Chalk = require("@packages/Chalk")
 local t = require("@packages/t")
 
 local Config = require("@assetfile/Config")
@@ -52,9 +52,9 @@ local function hasChanges(previous: FileSnapshot, current: FileSnapshot): boolea
     return false
 end
 
-function Watcher.watch(mappings: { Config.AssetMapping }, apiKey: string, pollInterval: number?): ()
+function Watcher.watch(mappings: { Config.AssetMapping }, apiKeys: { [number]: string }, pollInterval: number?): ()
     assert(t.table(mappings))
-    assert(t.string(apiKey))
+    assert(t.table(apiKeys))
 
     local interval = pollInterval or DEFAULT_POLL_INTERVAL
 
@@ -65,15 +65,15 @@ function Watcher.watch(mappings: { Config.AssetMapping }, apiKey: string, pollIn
     end
 
     -- Run initial sync
-    print(`{stdio.style("bold")}Running initial sync...` .. `{stdio.style("reset")}`)
-    for _, mapping in mappings do
-        Sync.run(mapping, apiKey)
+    print(Chalk.bold("Running initial sync..."))
+    for i, mapping in mappings do
+        Sync.run(mapping, apiKeys[i])
     end
 
     print(
-        `\n{stdio.style("bold")}Watching for changes`
-            .. ` (polling every {interval} seconds)...`
-            .. `{stdio.style("reset")}\n`
+        `\n{Chalk.bold(
+            `Watching for changes (polling every {interval} {if interval == 1 then "second" else "seconds"})...`
+        )}\n`
     )
 
     -- Poll for changes using modification times
@@ -82,12 +82,8 @@ function Watcher.watch(mappings: { Config.AssetMapping }, apiKey: string, pollIn
             local currentSnapshot = takeSnapshot(mapping.assets)
 
             if hasChanges(snapshots[i], currentSnapshot) then
-                print(
-                    `{stdio.style("dim")}Changes detected in`
-                        .. ` "{mapping.assets}", syncing...`
-                        .. `{stdio.style("reset")}`
-                )
-                Sync.run(mapping, apiKey)
+                print(Chalk.dim(`Changes detected in "{mapping.assets}", syncing...`))
+                Sync.run(mapping, apiKeys[i])
                 snapshots[i] = currentSnapshot
             end
         end

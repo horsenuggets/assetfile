@@ -77,12 +77,12 @@ return function()
                 expect(config.mappings[1].creator.groupId).to.equal("67890")
             end)
 
-            it("should load a config with optional apiKey", function()
+            it("should load a config with optional apiKeyEnvName", function()
                 local dir = createTempDir(BASE_NAME)
                 local path = writeConfig(dir, {
-                    apiKey = "test-key-123",
                     mappings = {
                         {
+                            apiKeyEnvName = "MY_CUSTOM_KEY",
                             assets = "assets",
                             output = "Assets.luau",
                             creator = { userId = "12345" },
@@ -91,7 +91,7 @@ return function()
                 })
 
                 local config = Config.load(path)
-                expect(config.apiKey).to.equal("test-key-123")
+                expect(config.mappings[1].apiKeyEnvName).to.equal("MY_CUSTOM_KEY")
             end)
 
             it("should support multiple mappings", function()

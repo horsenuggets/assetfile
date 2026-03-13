@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.4
+- Added per-mapping `apiKeyEnvName` field for custom API key environment variables
+- Replaced `stdio.style` and `stdio.color` with Chalk for terminal styling
+
 ## 0.0.3
 - Removed CLI api-key management in favor of .env file with ROBLOX_API_KEY
 - Added retry logic with exponential backoff for network failures and rate limits

@@ -8,9 +8,9 @@ asset map, uploads new or changed assets, and removes stale entries.
 --]]
 
 local fs = require("@lune/fs")
-local stdio = require("@lune/stdio")
 local task = require("@lune/task")
 
+local Chalk = require("@packages/Chalk")
 local t = require("@packages/t")
 
 local AssetMap = require("@assetfile/AssetMap")
@@ -62,7 +62,7 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
         if not currentFileSet[relativePath] then
             assetMap:Remove(relativePath)
             result.Removed += 1
-            print(`{stdio.color("yellow")}Removed{stdio.style("reset")}` .. ` "{relativePath}"`)
+            print(`{Chalk.yellow("Removed")} "{relativePath}"`)
         end
     end
 
@@ -170,25 +170,16 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
             assetMap:Set(jobResult.relativePath, jobResult.assetId :: string, jobResult.hash)
             if jobResult.isUpdate then
                 result.Updated += 1
-                print(
-                    `{stdio.color("blue")}Updated{stdio.style("reset")}`
-                        .. ` "{jobResult.relativePath}" (asset {jobResult.assetId})`
-                )
+                print(`{Chalk.blue("Updated")} "{jobResult.relativePath}" (asset {jobResult.assetId})`)
             else
                 result.Uploaded += 1
-                print(
-                    `{stdio.color("green")}Uploaded{stdio.style("reset")}`
-                        .. ` "{jobResult.relativePath}" (asset {jobResult.assetId})`
-                )
+                print(`{Chalk.green("Uploaded")} "{jobResult.relativePath}" (asset {jobResult.assetId})`)
             end
         else
             result.Failed += 1
             local errorMsg = `Failed to sync "{jobResult.relativePath}": {jobResult.errorMessage}`
             table.insert(result.Errors, errorMsg)
-            print(
-                `{stdio.color("red")}Failed{stdio.style("reset")}`
-                    .. ` "{jobResult.relativePath}": {jobResult.errorMessage}`
-            )
+            print(`{Chalk.red("Failed")} "{jobResult.relativePath}": {jobResult.errorMessage}`)
         end
     end
 
