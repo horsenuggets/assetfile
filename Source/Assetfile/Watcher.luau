@@ -52,9 +52,9 @@ local function hasChanges(previous: FileSnapshot, current: FileSnapshot): boolea
     return false
 end
 
-function Watcher.watch(mappings: { Config.AssetMapping }, apiKey: string, pollInterval: number?): ()
+function Watcher.watch(mappings: { Config.AssetMapping }, apiKeys: { [number]: string }, pollInterval: number?): ()
     assert(t.table(mappings))
-    assert(t.string(apiKey))
+    assert(t.table(apiKeys))
 
     local interval = pollInterval or DEFAULT_POLL_INTERVAL
 
@@ -66,8 +66,8 @@ function Watcher.watch(mappings: { Config.AssetMapping }, apiKey: string, pollIn
 
     -- Run initial sync
     print(Chalk.bold("Running initial sync..."))
-    for _, mapping in mappings do
-        Sync.run(mapping, apiKey)
+    for i, mapping in mappings do
+        Sync.run(mapping, apiKeys[i])
     end
 
     print(
@@ -83,7 +83,7 @@ function Watcher.watch(mappings: { Config.AssetMapping }, apiKey: string, pollIn
 
             if hasChanges(snapshots[i], currentSnapshot) then
                 print(Chalk.dim(`Changes detected in "{mapping.assets}", syncing...`))
-                Sync.run(mapping, apiKey)
+                Sync.run(mapping, apiKeys[i])
                 snapshots[i] = currentSnapshot
             end
         end

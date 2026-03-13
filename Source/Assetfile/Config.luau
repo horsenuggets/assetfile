@@ -16,6 +16,7 @@ local t = require("@packages/t")
 local CONFIG_FILENAME = "assetfile.json"
 
 export type AssetMapping = {
+    apiKeyEnvName: string?,
     assets: string,
     output: string,
     creator: CreatorConfig,
@@ -36,6 +37,7 @@ local validateCreator = t.interface({
 })
 
 local validateMapping = t.interface({
+    apiKeyEnvName = t.optional(t.string),
     assets = t.string,
     output = t.string,
     creator = validateCreator,
