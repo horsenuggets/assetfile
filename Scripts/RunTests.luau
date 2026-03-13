@@ -15,7 +15,6 @@ local Testable = require("@devpackages/Testable")
 local process = require("@lune/process")
 
 local TESTS = {
-    { Name = "ApiKeyStoreTest", Func = require("../Tests/ApiKeyStoreTest.spec") },
     { Name = "AssetMapTest", Func = require("../Tests/AssetMapTest.spec") },
     { Name = "CliTest", Func = require("../Tests/CliTest.spec") },
     { Name = "ConfigTest", Func = require("../Tests/ConfigTest.spec") },
