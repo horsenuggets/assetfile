@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.3
+- Removed CLI api-key management in favor of .env file with ROBLOX_API_KEY
+- Added retry logic with exponential backoff for network failures and rate limits
+- Updated Dotenv dependency to 0.1.3 for compiled binary compatibility
+- Fixed version display showing 0.0.0 when run outside repo directory
+
 ## 0.0.2
 - Fixed release artifacts to use zip archives for Rokit compatibility
 - Fixed release checks to use forked luau-lsp with --platform lune
