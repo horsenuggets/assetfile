@@ -148,22 +148,24 @@ local initCommand = Commandline.Command.new({
         local nonInteractive = userId ~= nil or groupId ~= nil
 
         if not userId and not groupId then
-            userId = stdio.prompt("text", "Roblox user ID (blank to use group ID instead)")
-            if #userId == 0 then
-                userId = nil
+            local creatorType = stdio.prompt("select", "Creator type", { "User ID", "Group ID" })
+            if creatorType == 1 then
+                userId = stdio.prompt("text", "Roblox user ID")
+                assert(#userId > 0, "Must provide a user ID.")
+            else
                 groupId = stdio.prompt("text", "Roblox group ID")
-                assert(#groupId > 0, "Must provide either a user ID or group ID.")
+                assert(#groupId > 0, "Must provide a group ID.")
             end
         end
 
         local assetsDir = flags.assets.Value :: string?
         if not assetsDir then
             if nonInteractive then
-                assetsDir = "assets"
+                assetsDir = "Assets"
             else
-                assetsDir = stdio.prompt("text", 'Assets directory ("assets" if blank)')
+                assetsDir = stdio.prompt("text", 'Assets directory ("Assets" if blank)')
                 if #assetsDir == 0 then
-                    assetsDir = "assets"
+                    assetsDir = "Assets"
                 end
             end
         end
