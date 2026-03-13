@@ -10,9 +10,9 @@ hashing file contents on every poll.
 --]]
 
 local fs = require("@lune/fs")
-local stdio = require("@lune/stdio")
 local task = require("@lune/task")
 
+local Chalk = require("@packages/Chalk")
 local t = require("@packages/t")
 
 local Config = require("@assetfile/Config")
@@ -65,15 +65,15 @@ function Watcher.watch(mappings: { Config.AssetMapping }, apiKey: string, pollIn
     end
 
     -- Run initial sync
-    print(`{stdio.style("bold")}Running initial sync...` .. `{stdio.style("reset")}`)
+    print(Chalk.bold("Running initial sync..."))
     for _, mapping in mappings do
         Sync.run(mapping, apiKey)
     end
 
     print(
-        `\n{stdio.style("bold")}Watching for changes`
-            .. ` (polling every {interval} seconds)...`
-            .. `{stdio.style("reset")}\n`
+        `\n{Chalk.bold(
+            `Watching for changes (polling every {interval} {if interval == 1 then "second" else "seconds"})...`
+        )}\n`
     )
 
     -- Poll for changes using modification times
@@ -82,11 +82,7 @@ function Watcher.watch(mappings: { Config.AssetMapping }, apiKey: string, pollIn
             local currentSnapshot = takeSnapshot(mapping.assets)
 
             if hasChanges(snapshots[i], currentSnapshot) then
-                print(
-                    `{stdio.style("dim")}Changes detected in`
-                        .. ` "{mapping.assets}", syncing...`
-                        .. `{stdio.style("reset")}`
-                )
+                print(Chalk.dim(`Changes detected in "{mapping.assets}", syncing...`))
                 Sync.run(mapping, apiKey)
                 snapshots[i] = currentSnapshot
             end
