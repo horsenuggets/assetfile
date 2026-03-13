@@ -105,42 +105,115 @@ local watchCommand = Commandline.Command.new({
 local initCommand = Commandline.Command.new({
     Name = "init",
     Description = "Create a new assetfile.json configuration file.",
-    Impl = function(_args: any, _flags: any)
+    Flags = {
+        Commandline.Flag.new({
+            Name = "api-key-env",
+            Description = "Environment variable name for the API key.",
+            Type = "string",
+            Shorthand = "k",
+        }),
+        Commandline.Flag.new({
+            Name = "assets",
+            Description = "Assets directory path.",
+            Type = "string",
+            Shorthand = "a",
+        }),
+        Commandline.Flag.new({
+            Name = "group-id",
+            Description = "Roblox group ID for the creator.",
+            Type = "string",
+            Shorthand = "g",
+        }),
+        Commandline.Flag.new({
+            Name = "output",
+            Description = "Output Luau file path.",
+            Type = "string",
+            Shorthand = "o",
+        }),
+        Commandline.Flag.new({
+            Name = "user-id",
+            Description = "Roblox user ID for the creator.",
+            Type = "string",
+            Shorthand = "u",
+        }),
+    },
+    Impl = function(_args: any, flags: any)
         if Config.exists() then
             print("assetfile.json already exists.")
             return
         end
 
-        local userId = stdio.prompt("text", "Roblox user ID")
-        assert(#userId > 0, "User ID must not be empty.")
+        local userId = flags["user-id"].Value :: string?
+        local groupId = flags["group-id"].Value :: string?
+        local nonInteractive = userId ~= nil or groupId ~= nil
 
-        local assetsDir = stdio.prompt("text", 'Assets directory ("assets" if blank)')
-        if #assetsDir == 0 then
-            assetsDir = "assets"
+        if not userId and not groupId then
+            userId = stdio.prompt("text", "Roblox user ID (blank to use group ID instead)")
+            if #userId == 0 then
+                userId = nil
+                groupId = stdio.prompt("text", "Roblox group ID")
+                assert(#groupId > 0, "Must provide either a user ID or group ID.")
+            end
         end
 
-        local outputPath = stdio.prompt("text", 'Output Luau file ("Assets.luau" if blank)')
-        if #outputPath == 0 then
-            outputPath = "Assets.luau"
+        local assetsDir = flags.assets.Value :: string?
+        if not assetsDir then
+            if nonInteractive then
+                assetsDir = "assets"
+            else
+                assetsDir = stdio.prompt("text", 'Assets directory ("assets" if blank)')
+                if #assetsDir == 0 then
+                    assetsDir = "assets"
+                end
+            end
+        end
+
+        local outputPath = flags.output.Value :: string?
+        if not outputPath then
+            if nonInteractive then
+                outputPath = "Assets.luau"
+            else
+                outputPath = stdio.prompt("text", 'Output Luau file ("Assets.luau" if blank)')
+                if #outputPath == 0 then
+                    outputPath = "Assets.luau"
+                end
+            end
+        end
+
+        local apiKeyEnvName = flags["api-key-env"].Value :: string?
+        if not apiKeyEnvName and not nonInteractive then
+            apiKeyEnvName = stdio.prompt("text", 'API key env variable name ("ROBLOX_API_KEY" if blank)')
+            if #apiKeyEnvName == 0 then
+                apiKeyEnvName = nil
+            end
+        end
+
+        local creator: { [string]: string } = {}
+        if userId then
+            creator.userId = userId
+        else
+            creator.groupId = groupId :: string
+        end
+
+        local mapping: { [string]: any } = {
+            assets = assetsDir,
+            output = outputPath,
+            creator = creator,
+        }
+
+        if apiKeyEnvName and apiKeyEnvName ~= "ROBLOX_API_KEY" then
+            mapping.apiKeyEnvName = apiKeyEnvName
         end
 
         local config = {
-            mappings = {
-                {
-                    assets = assetsDir,
-                    output = outputPath,
-                    creator = {
-                        userId = userId,
-                    },
-                },
-            },
+            mappings = { mapping },
         }
 
         fs.writeFile("assetfile.json", serde.encode("json", config))
         print(`Created assetfile.json with assets directory "{assetsDir}".`)
 
-        if not fs.isDir(assetsDir) then
-            fs.writeDir(assetsDir)
+        if not fs.isDir(assetsDir :: string) then
+            fs.writeDir(assetsDir :: string)
             print(`Created directory "{assetsDir}".`)
         end
     end,
