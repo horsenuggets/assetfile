@@ -44,6 +44,83 @@ return function()
                 expect(result.ok).to.equal(false)
             end)
 
+            it("should create config with all flags", function()
+                local dir = createTempDir(BASE_NAME)
+                local result = process.exec(BINARY_PATH, {
+                    "init",
+                    "--user-id",
+                    "12345",
+                    "--assets",
+                    "images",
+                    "--output",
+                    "Images.luau",
+                    "--api-key-env",
+                    "MY_KEY",
+                }, {
+                    cwd = dir,
+                })
+                expect(result.ok).to.equal(true)
+
+                local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
+                expect(config.mappings[1].assets).to.equal("images")
+                expect(config.mappings[1].output).to.equal("Images.luau")
+                expect(config.mappings[1].creator.userId).to.equal("12345")
+                expect(config.mappings[1].apiKeyEnvName).to.equal("MY_KEY")
+            end)
+
+            it("should create config with group-id flag", function()
+                local dir = createTempDir(BASE_NAME)
+                local result = process.exec(BINARY_PATH, {
+                    "init",
+                    "--group-id",
+                    "67890",
+                    "--assets",
+                    "sounds",
+                    "--output",
+                    "Sounds.luau",
+                }, {
+                    cwd = dir,
+                })
+                expect(result.ok).to.equal(true)
+
+                local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
+                expect(config.mappings[1].creator.groupId).to.equal("67890")
+                expect(config.mappings[1].apiKeyEnvName).to.equal(nil)
+            end)
+
+            it("should omit apiKeyEnvName when set to ROBLOX_API_KEY", function()
+                local dir = createTempDir(BASE_NAME)
+                local result = process.exec(BINARY_PATH, {
+                    "init",
+                    "--user-id",
+                    "12345",
+                    "--api-key-env",
+                    "ROBLOX_API_KEY",
+                }, {
+                    cwd = dir,
+                })
+                expect(result.ok).to.equal(true)
+
+                local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
+                expect(config.mappings[1].apiKeyEnvName).to.equal(nil)
+            end)
+
+            it("should use default values for assets and output", function()
+                local dir = createTempDir(BASE_NAME)
+                local result = process.exec(BINARY_PATH, {
+                    "init",
+                    "--user-id",
+                    "12345",
+                }, {
+                    cwd = dir,
+                })
+                expect(result.ok).to.equal(true)
+
+                local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
+                expect(config.mappings[1].assets).to.equal("Assets")
+                expect(config.mappings[1].output).to.equal("Assets.luau")
+            end)
+
             it("should detect existing config", function()
                 local dir = createTempDir(BASE_NAME)
                 fs.writeFile(
