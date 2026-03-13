@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.5
+- Changed init creator prompt to a select menu (User ID vs Group ID)
+- Changed default assets directory from "assets" to "Assets"
+- Added flags for all init prompts for non-interactive use
+
 ## 0.0.4
 - Added per-mapping `apiKeyEnvName` field for custom API key environment variables
 - Replaced `stdio.style` and `stdio.color` with Chalk for terminal styling
