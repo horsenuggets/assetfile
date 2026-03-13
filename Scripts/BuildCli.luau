@@ -190,6 +190,21 @@ local function buildCli()
         fs.removeFile(`{outputPath}.exe`)
     end
 
+    -- Inject version from VERSION file into the CLI source so the
+    -- built binary always reports the correct version regardless
+    -- of what is hardcoded in the source.
+    local versionContent = fs.readFile(`{PROJECT_ROOT}/VERSION`)
+    local version = string.match(versionContent, "^%s*(.-)%s*$")
+
+    local cliSource = fs.readFile(ENTRY_POINT)
+    local originalCliSource = cliSource
+    local patchedCliSource = string.gsub(cliSource, 'local VERSION = "[^"]+"', `local VERSION = "{version}"`)
+
+    if patchedCliSource ~= cliSource then
+        fs.writeFile(ENTRY_POINT, patchedCliSource)
+        print(`Injected version "{version}" into CLI source.`)
+    end
+
     -- Strip shebang for building (lune build doesn't support
     -- shebangs). Temp file goes in same directory so relative
     -- requires resolve correctly.
@@ -213,9 +228,13 @@ local function buildCli()
 
     local result = process.exec("lune", args, { cwd = PROJECT_ROOT })
 
-    -- Clean up temporary entry point and restore patched files
+    -- Clean up temporary entry point, restore patched files, and
+    -- undo the version injection in the CLI source.
     if fs.isFile(tempEntryPoint) then
         fs.removeFile(tempEntryPoint)
+    end
+    if originalCliSource ~= patchedCliSource then
+        fs.writeFile(ENTRY_POINT, originalCliSource)
     end
     restoreFiles(backups)
 

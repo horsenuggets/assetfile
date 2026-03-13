@@ -15,32 +15,24 @@ local serde = require("@lune/serde")
 local stdio = require("@lune/stdio")
 
 local Commandline = require("@packages/Commandline")
+local Dotenv = require("@packages/Dotenv")
 
-local ApiKeyStore = require("@assetfile/ApiKeyStore")
 local Config = require("@assetfile/Config")
 local Sync = require("@assetfile/Sync")
 local Watcher = require("@assetfile/Watcher")
 
-local VERSION
-do
-    local ok, content = pcall(fs.readFile, "./VERSION")
-    VERSION = if ok then (content:gsub("%s+", "")) else "0.0.0"
-end
+local VERSION = "0.0.2"
 
 local function resolveApiKey(): string
-    -- Check environment variable first
-    local envKey = process.env.ROBLOX_API_KEY
-    if envKey and #envKey > 0 then
-        return envKey
+    pcall(Dotenv.load)
+
+    local apiKey = process.env.ROBLOX_API_KEY
+
+    if apiKey and #apiKey > 0 then
+        return apiKey
     end
 
-    -- Check stored keys
-    local stored = ApiKeyStore.get()
-    if stored then
-        return stored.key
-    end
-
-    error("No API key found. Set the ROBLOX_API_KEY environment variable" .. ' or run "assetfile api-key add".')
+    error("No API key found. Set ROBLOX_API_KEY in your .env" .. " file or as an environment variable.")
 end
 
 -- sync command
@@ -147,81 +139,6 @@ local initCommand = Commandline.Command.new({
     end,
 })
 
--- api-key commands
-
-local apiKeyAddCommand = Commandline.Command.new({
-    Name = "add",
-    Description = "Add a Roblox API key.",
-    Impl = function(_args: any, _flags: any)
-        local name = stdio.prompt("text", 'Key name ("default" if blank)')
-        if #name == 0 then
-            name = "default"
-        end
-
-        local key = stdio.prompt("password", "API key")
-        assert(#key > 0, "API key must not be empty.")
-
-        ApiKeyStore.add(name, key)
-        print(`API key "{name}" added successfully.`)
-    end,
-})
-
-local apiKeyListCommand = Commandline.Command.new({
-    Name = "list",
-    Description = "List all stored API keys.",
-    Impl = function(_args: any, _flags: any)
-        local keys = ApiKeyStore.list()
-        if #keys == 0 then
-            print("No API keys stored.")
-            return
-        end
-
-        print(`{#keys} stored API {if #keys == 1 then "key" else "keys"}:`)
-        for _, stored in keys do
-            local masked = stored.key:sub(1, 8) .. "..."
-            print(`  {stored.name} ({masked})`)
-        end
-    end,
-})
-
-local apiKeyRemoveCommand = Commandline.Command.new({
-    Name = "remove",
-    Description = "Remove a stored API key.",
-    Flags = {
-        Commandline.Flag.new({
-            Name = "all",
-            Description = "Remove all stored API keys.",
-        }),
-    },
-    Impl = function(_args: any, flags: any)
-        if flags.all.Value then
-            local count = ApiKeyStore.removeAll()
-            print(`Removed {count} API {if count == 1 then "key" else "keys"}.`)
-            return
-        end
-
-        local name = stdio.prompt("text", "Key name to remove")
-        assert(#name > 0, "Key name must not be empty.")
-
-        local removed = ApiKeyStore.remove(name)
-        if removed then
-            print(`API key "{name}" removed.`)
-        else
-            print(`No API key found with name "{name}".`)
-        end
-    end,
-})
-
-local apiKeyCommand = Commandline.Command.new({
-    Name = "api-key",
-    Description = "Manage Roblox API keys.",
-    Subcommands = {
-        apiKeyAddCommand,
-        apiKeyListCommand,
-        apiKeyRemoveCommand,
-    },
-})
-
 -- root command
 
 local rootCommand = Commandline.Command.new({
@@ -229,7 +146,6 @@ local rootCommand = Commandline.Command.new({
     Description = "Finally, a way to work with Roblox assets local to your computer.",
     Version = VERSION,
     Subcommands = {
-        apiKeyCommand,
         initCommand,
         syncCommand,
         watchCommand,

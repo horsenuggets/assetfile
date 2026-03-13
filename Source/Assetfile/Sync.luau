@@ -18,6 +18,8 @@ local Config = require("@assetfile/Config")
 local FileUtils = require("@assetfile/FileUtils")
 local RobloxApi = require("@assetfile/RobloxApi")
 
+local MAX_CONCURRENT_UPLOADS = 5
+
 export type SyncResult = {
     Uploaded: number,
     Updated: number,
@@ -105,8 +107,15 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
 
     if remaining > 0 then
         local done = false
+        local activeCount = 0
 
         for i, job in jobs do
+            -- Wait until a slot is available
+            while activeCount >= MAX_CONCURRENT_UPLOADS do
+                task.wait(0.05)
+            end
+
+            activeCount += 1
             task.spawn(function()
                 local displayName = job.relativePath:match("([^/]+)%..+$") or job.relativePath
                 local fileContent = fs.readFile(job.fullPath)
@@ -142,6 +151,7 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
                     }
                 end
 
+                activeCount -= 1
                 remaining -= 1
                 if remaining == 0 then
                     done = true
