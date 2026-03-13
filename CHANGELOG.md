@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.6
+- Changed image uploads to use Image asset type instead of Decal for universal compatibility
+
 ## 0.0.5
 - Changed init creator prompt to a select menu (User ID vs Group ID)
 - Changed default assets directory from "assets" to "Assets"
