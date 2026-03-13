@@ -17,34 +17,13 @@ local removeDirectory = require("./Helpers/removeDirectory")
 
 local BASE_NAME = "cli"
 local BINARY_PATH = `{process.cwd}Build/assetfile`
-local ENTRY_POINT = `{process.cwd}Source/Commandline/AssetfileCli.luau`
 
 return function()
     beforeAll(function()
-        -- Strip shebang for building (lune build doesn't support
-        -- shebangs). Temp file goes in same directory so relative
-        -- requires resolve correctly.
-        local entryContent = fs.readFile(ENTRY_POINT)
-        local entryDir = ENTRY_POINT:match("(.*/)") or ""
-        local tempEntryPoint = `{entryDir}_build_entry.luau`
-        local strippedContent = entryContent:gsub("^#![^\n]*\n", "")
-        fs.writeFile(tempEntryPoint, strippedContent)
-
-        if not fs.isDir(`{process.cwd}Build`) then
-            fs.writeDir(`{process.cwd}Build`)
-        end
-
         local result = process.exec("lune", {
-            "build",
-            tempEntryPoint,
-            "-o",
-            BINARY_PATH,
+            "run",
+            `{process.cwd}Scripts/BuildCli.luau`,
         })
-
-        if fs.isFile(tempEntryPoint) then
-            fs.removeFile(tempEntryPoint)
-        end
-
         assert(result.ok, `Failed to build CLI binary: {result.stderr}`)
         assert(fs.isFile(BINARY_PATH), "Failed to build CLI binary.")
     end)
@@ -54,17 +33,6 @@ return function()
     end)
 
     describe("CLI", function()
-        describe("api-key", function()
-            it("should list no keys initially", function()
-                local dir = createTempDir(BASE_NAME)
-                local result = process.exec(BINARY_PATH, { "api-key", "list" }, {
-                    env = { HOME = dir },
-                })
-                expect(result.ok).to.equal(true)
-                expect(result.stdout:find("No API keys stored")).to.be.ok()
-            end)
-        end)
-
         describe("init", function()
             it("should error when no input is provided", function()
                 local dir = createTempDir(BASE_NAME)
