@@ -21,11 +21,7 @@ local Config = require("@assetfile/Config")
 local Sync = require("@assetfile/Sync")
 local Watcher = require("@assetfile/Watcher")
 
-local VERSION
-do
-    local ok, content = pcall(fs.readFile, "./VERSION")
-    VERSION = if ok then (content:gsub("%s+", "")) else "0.0.0"
-end
+local VERSION = "0.0.2"
 
 local function resolveApiKey(): string
     -- Check environment variable first
