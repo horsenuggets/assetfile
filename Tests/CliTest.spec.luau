@@ -117,7 +117,7 @@ return function()
                 expect(result.ok).to.equal(true)
 
                 local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
-                expect(config.mappings[1].assets).to.equal("assets")
+                expect(config.mappings[1].assets).to.equal("Assets")
                 expect(config.mappings[1].output).to.equal("Assets.luau")
             end)
 
