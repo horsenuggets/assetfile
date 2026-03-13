@@ -21,7 +21,7 @@ local INITIAL_POLL_DELAY = 1
 local MAX_UPLOAD_RETRIES = 3
 local INITIAL_RETRY_DELAY = 2
 
-export type AssetType = "Audio" | "Decal" | "Model"
+export type AssetType = "Audio" | "Image" | "Model"
 
 export type CreatorInfo = {
     userId: string?,
@@ -49,22 +49,22 @@ export type RobloxApi = {
 }
 
 local ASSET_TYPE_MAP: { [string]: AssetType } = {
-    bmp = "Decal",
+    bmp = "Image",
     fbx = "Model",
     flac = "Audio",
-    gif = "Decal",
+    gif = "Image",
     glb = "Model",
     gltf = "Model",
-    jpeg = "Decal",
-    jpg = "Decal",
+    jpeg = "Image",
+    jpg = "Image",
     mp3 = "Audio",
     ogg = "Audio",
-    png = "Decal",
+    png = "Image",
     rbxm = "Model",
     rbxmx = "Model",
-    tga = "Decal",
+    tga = "Image",
     wav = "Audio",
-    webp = "Decal",
+    webp = "Image",
 }
 
 local RobloxApi = {}
