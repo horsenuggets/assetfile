@@ -18,6 +18,8 @@ local FormData = require("@assetfile/FormData")
 local API_BASE = "https://apis.roblox.com/assets/v1"
 local MAX_POLL_ATTEMPTS = 10
 local INITIAL_POLL_DELAY = 1
+local MAX_UPLOAD_RETRIES = 3
+local INITIAL_RETRY_DELAY = 2
 
 export type AssetType = "Audio" | "Decal" | "Model"
 
@@ -93,13 +95,29 @@ function RobloxApi._pollOperation(self: RobloxApi, operationId: string): UploadR
     for attempt = 1, MAX_POLL_ATTEMPTS do
         task.wait(delay)
 
-        local response = net.request({
+        local ok, response = pcall(net.request, {
             url = `{API_BASE}/operations/{operationId}`,
             method = "GET",
             headers = {
                 ["x-api-key"] = (self :: any)._apiKey,
             },
         })
+
+        if not ok then
+            -- Network error (DNS, connection reset, etc.), retry
+            if attempt < MAX_POLL_ATTEMPTS then
+                delay *= 2
+                continue
+            end
+            error(`Network error polling operation "{operationId}": {response}`)
+        end
+
+        if response.statusCode == 429 then
+            -- Rate limited, back off and retry
+            local retryAfter = tonumber(response.headers["retry-after"]) or delay * 2
+            task.wait(retryAfter)
+            continue
+        end
 
         if not response.ok then
             error(`Failed to poll operation "{operationId}" (HTTP {response.statusCode}).`)
@@ -143,32 +161,69 @@ function RobloxApi.Upload(self: RobloxApi, request: UploadRequest): UploadResult
         creationContext = creatorContext,
     })
 
-    local form = FormData.new()
-    form:Append("request", metadata, nil, "application/json")
-    form:Append("fileContent", request.FileContent, request.Filename, FormData.getMimeType(request.Filename))
+    local retryDelay = INITIAL_RETRY_DELAY
 
-    local response = net.request({
-        url = `{API_BASE}/assets`,
-        method = "POST",
-        headers = {
-            ["x-api-key"] = (self :: any)._apiKey,
-            ["Content-Type"] = form:GetContentType(),
-        },
-        body = form:GetBody(),
-    })
+    for attempt = 1, MAX_UPLOAD_RETRIES do
+        local form = FormData.new()
+        form:Append("request", metadata, nil, "application/json")
+        form:Append("fileContent", request.FileContent, request.Filename, FormData.getMimeType(request.Filename))
 
-    if not response.ok then
-        error(`Failed to upload asset "{request.DisplayName}"` .. ` (HTTP {response.statusCode}): {response.body}`)
+        local ok, response = pcall(net.request, {
+            url = `{API_BASE}/assets`,
+            method = "POST",
+            headers = {
+                ["x-api-key"] = (self :: any)._apiKey,
+                ["Content-Type"] = form:GetContentType(),
+            },
+            body = form:GetBody(),
+        })
+
+        if not ok then
+            -- Network error (DNS, connection reset, etc.)
+            if attempt < MAX_UPLOAD_RETRIES then
+                task.wait(retryDelay)
+                retryDelay *= 2
+                continue
+            end
+            error(`Network error uploading "{request.DisplayName}": {response}`)
+        end
+
+        if response.statusCode == 429 then
+            -- Rate limited
+            if attempt < MAX_UPLOAD_RETRIES then
+                local retryAfter = tonumber(response.headers["retry-after"]) or retryDelay
+                task.wait(retryAfter)
+                retryDelay *= 2
+                continue
+            end
+            error(`Rate limited uploading "{request.DisplayName}"` .. ` after {MAX_UPLOAD_RETRIES} attempts.`)
+        end
+
+        if response.statusCode >= 500 then
+            -- Server error, retry
+            if attempt < MAX_UPLOAD_RETRIES then
+                task.wait(retryDelay)
+                retryDelay *= 2
+                continue
+            end
+        end
+
+        if not response.ok then
+            error(`Failed to upload asset "{request.DisplayName}"` .. ` (HTTP {response.statusCode}): {response.body}`)
+        end
+
+        local body = serde.decode("json", response.body)
+        local operationId = body.path and body.path:match("operations/(.+)") or body.operationId
+
+        if not operationId then
+            error(`Upload response did not contain an operation ID.`)
+        end
+
+        return self:_pollOperation(operationId)
     end
 
-    local body = serde.decode("json", response.body)
-    local operationId = body.path and body.path:match("operations/(.+)") or body.operationId
-
-    if not operationId then
-        error(`Upload response did not contain an operation ID.`)
-    end
-
-    return self:_pollOperation(operationId)
+    -- Unreachable, but satisfies the type checker
+    error(`Failed to upload "{request.DisplayName}" after {MAX_UPLOAD_RETRIES} attempts.`)
 end
 
 return RobloxApi
