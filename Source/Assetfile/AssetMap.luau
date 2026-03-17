@@ -85,7 +85,7 @@ function AssetMap.Save(self: AssetMap): ()
     if not fs.isDir(cacheDir) then
         fs.writeDir(cacheDir)
     end
-    fs.writeFile((self :: any)._cachePath, serde.encode("json", (self :: any)._entries))
+    fs.writeFile((self :: any)._cachePath, serde.encode("json", (self :: any)._entries) .. "\n")
 end
 
 function AssetMap.WriteLuauModule(self: AssetMap, outputPath: string): ()
