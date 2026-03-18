@@ -1,6 +1,6 @@
 --[[
 
-ConfigTest
+ConfigTest.spec
 
 Tests for the Config module that loads and validates assetfile.json.
 
