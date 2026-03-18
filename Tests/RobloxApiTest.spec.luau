@@ -1,6 +1,6 @@
 --[[
 
-RobloxApiTest
+RobloxApiTest.spec
 
 Tests for the RobloxApi module. Only tests static methods and
 construction since actual API calls require a real API key.
