@@ -1,6 +1,6 @@
 --[[
 
-CliTest
+CliTest.spec
 
 Integration tests for the built assetfile CLI binary. Builds the
 binary once, then runs it with various arguments to verify correct
