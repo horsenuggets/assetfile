@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.7
+- Added file header with name and auto-generated notice to WriteLuauModule output
+- Updated file header names to use full sub-extension (e.g., `MyTest.spec`)
+- Updated luau-lsp to 1.63.0-horse.1.2
+- Switched rojo to horsenuggets fork 7.7.0-rc.1-horse.0.1
+- Fixed trailing newline when writing cache file
+
 ## 0.0.6
 - Changed image uploads to use Image asset type instead of Decal for universal compatibility
 
