@@ -9,7 +9,7 @@ registry = "https://github.com/UpliftGames/wally-index"
 repository = "https://github.com/horsenuggets/assetfile"
 
 [dependencies]
-Chalk = "horsenuggets/chalk-luau@0.0.3"
+Chalk = "horsenuggets/chalk-luau@1.0.0"
 Commandline = "horsenuggets/commandline-luau@0.0.11"
 Dotenv = "horsenuggets/dotenv-luau@0.1.3"
 HashLib = "horsenuggets/hashlib@0.0.2"
