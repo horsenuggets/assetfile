@@ -8,7 +8,6 @@ asset map, uploads new or changed assets, and removes stale entries.
 --]]
 
 local fs = require("@lune/fs")
-local task = require("@lune/task")
 
 local Chalk = require("@packages/Chalk")
 local t = require("@packages/t")

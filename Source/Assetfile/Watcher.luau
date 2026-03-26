@@ -10,7 +10,6 @@ hashing file contents on every poll.
 --]]
 
 local fs = require("@lune/fs")
-local task = require("@lune/task")
 
 local Chalk = require("@packages/Chalk")
 local t = require("@packages/t")
