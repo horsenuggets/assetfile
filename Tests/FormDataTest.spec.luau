@@ -1,6 +1,6 @@
 --[[
 
-FormDataTest.spec
+FormDataTest
 
 Tests for the FormData multipart form-data builder.
 

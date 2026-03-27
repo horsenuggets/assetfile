@@ -1,6 +1,6 @@
 --[[
 
-FileUtilsTest.spec
+FileUtilsTest
 
 Tests for the FileUtils module that handles file scanning and hashing.
 
