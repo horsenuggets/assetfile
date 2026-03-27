@@ -6,8 +6,8 @@ on:
       - release
 
 jobs:
-  secrets:
-    name: Validate secrets
+  wally-auth:
+    name: Verify Wally auth
     runs-on: ubuntu-latest
     steps:
       - name: Check WALLY_AUTH exists
@@ -115,6 +115,29 @@ jobs:
 
       - name: Run static analysis
         run: lune run ./Submodules/luau-cicd/Scripts/RunStaticAnalysis.luau lune
+
+  json-format:
+    name: Check JSON format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Prettier
+        run: npm install -g prettier
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Check JSON format
+        run: lune run ./Submodules/luau-cicd/Scripts/CheckJsonFormat.luau
 
   version:
     name: Validate version
