@@ -2,7 +2,7 @@
     "aliases": {
         "assetfile": "./Source/Assetfile/",
         "devpackages": "./DevPackages/",
-        "lune": "~/.lune/.typedefs/0.10.4-horse.12.0/",
+        "lune": "~/.lune/.typedefs/0.10.4-horse.13.0/",
         "packages": "./Packages/",
         "tests": "./Tests/"
     },
