@@ -6,6 +6,20 @@ on:
       - release
 
 jobs:
+  secrets:
+    name: Validate secrets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check WALLY_AUTH exists
+        env:
+          WALLY_AUTH: ${{ secrets.WALLY_AUTH }}
+        run: |
+          if [ -z "$WALLY_AUTH" ]; then
+            echo "::error::WALLY_AUTH secret is not configured. Run: gh secret set WALLY_AUTH < ~/.wally/auth.toml"
+            exit 1
+          fi
+          echo "WALLY_AUTH is configured."
+
   pr-title:
     name: Validate PR title
     runs-on: ubuntu-latest
@@ -100,7 +114,7 @@ jobs:
         run: lune setup --no-update-luaurc
 
       - name: Run static analysis
-        run: luau-lsp analyze --platform lune --ignore "DevPackages/**" --ignore "Packages/**" --ignore "Submodules/**" .
+        run: lune run ./Submodules/luau-cicd/Scripts/RunStaticAnalysis.luau lune
 
   version:
     name: Validate version
