@@ -20,3 +20,8 @@ Packages
 sourcemap.json
 Tools
 __VERSION__.luau
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
