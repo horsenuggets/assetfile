@@ -13,7 +13,7 @@ Runs the Assetfile CLI directly from source without building.
 local process = require("@lune/process")
 
 local function runCli()
-    local args = { "run", "./Source/Commandline/AssetfileCli.luau" }
+    local args = { "run", "./Source/AssetfileCli" }
     for _, arg in process.args do
         table.insert(args, arg)
     end
