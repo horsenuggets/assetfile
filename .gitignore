@@ -19,3 +19,4 @@ DevPackages
 Packages
 sourcemap.json
 Tools
+__VERSION__.luau
