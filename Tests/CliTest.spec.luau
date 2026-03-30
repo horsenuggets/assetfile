@@ -1,6 +1,6 @@
 --[[
 
-CliTest
+CliTest.spec
 
 Integration tests for the built assetfile CLI binary. Builds the
 binary once, then runs it with various arguments to verify correct
@@ -20,10 +20,7 @@ local BINARY_PATH = `{process.cwd}Build/assetfile`
 
 return function()
     beforeAll(function()
-        local result = process.exec("lune", {
-            "run",
-            `{process.cwd}Scripts/BuildCli.luau`,
-        })
+        local result = process.exec(`{process.cwd}Scripts/BuildExecutable.luau`)
         assert(result.ok, `Failed to build CLI binary: {result.stderr}`)
         assert(fs.isFile(BINARY_PATH), "Failed to build CLI binary.")
     end)

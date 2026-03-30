@@ -1,6 +1,6 @@
 --[[
 
-AssetMapTest
+AssetMapTest.spec
 
 Tests for the AssetMap module that manages file-to-asset-ID mappings.
 

@@ -1,21 +1,41 @@
-.assetfile-cache.json
+# Build artifacts
+*.rbxl
+*.rbxlx
+*.rbxm
+*.rbxmx
+/Build
+
+# Dependencies
+/DevPackages
+/Packages
+/ServerPackages
+
+# Editor and environment
 .claude
 .DS_Store
 .env
 .local
 .mcp.json
-.test*
 .vscode
+
+# Generated files
 *.bak
 *.gen.*
 *.lock
-*.rbxl
-*.rbxlx
-*.rbxm
-*.rbxmx
+/*sourcemap.json
+
+# Legacy
 aftman.toml
-Build
-DevPackages
-Packages
-sourcemap.json
-Tools
+
+# Project
+/TODO.md
+
+# Repo-specific
+.assetfile-cache.json
+.test*
+__VERSION__.luau
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup

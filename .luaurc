@@ -1,8 +1,9 @@
 {
     "aliases": {
         "assetfile": "./Source/Assetfile/",
+        "assetfilecli": "./Source/AssetfileCli/",
         "devpackages": "./DevPackages/",
-        "lune": "~/.lune/.typedefs/0.10.4-horse.13.0/",
+        "lune": "~/.lune/.typedefs/0.10.4-horse.14.2/",
         "packages": "./Packages/",
         "tests": "./Tests/"
     },

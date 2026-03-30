@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.target }}
+    name: Build CLI ${{ matrix.target }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -32,23 +32,21 @@ jobs:
         run: wally install
 
       - name: Build executable
-        run: lune run Scripts/BuildCli.luau ${{ matrix.target }}
+        run: ./Scripts/BuildExecutable.luau ${{ matrix.target }}
 
-      - name: Package binary
+      - name: Rename binary
         run: |
-          VERSION=$(cat VERSION | tr -d '[:space:]')
-          cd Build
           if [[ "${{ matrix.target }}" == windows-* ]]; then
-            zip "assetfile-${VERSION}-${{ matrix.target }}.zip" assetfile.exe
+            mv Build/assetfile.exe Build/assetfile-${{ matrix.target }}.exe
           else
-            zip "assetfile-${VERSION}-${{ matrix.target }}.zip" assetfile
+            mv Build/assetfile Build/assetfile-${{ matrix.target }}
           fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: assetfile-${{ matrix.target }}
-          path: Build/assetfile-*.zip
+          path: Build/assetfile-${{ matrix.target }}*
 
   release:
     name: Create release
