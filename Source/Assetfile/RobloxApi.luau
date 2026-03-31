@@ -9,7 +9,6 @@ and polling for operation completion.
 
 local net = require("@lune/net")
 local serde = require("@lune/serde")
-local task = require("@lune/task")
 
 local t = require("@packages/t")
 

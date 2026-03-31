@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0
+- Modernize CLI into modular command architecture matching rbxstudio-cli pattern
+- Add completion, version generation, and build scripts
+- Standardize CI workflows across all commandline-luau CLI repos
+- Add per-repo Terraform config for branch protection
+- Bump commandline-luau to 0.0.15 and lune to 0.10.4-horse.14.2
+- Fix test file headers to include .spec sub-extension
+
 ## 0.0.7
 - Added file header with name and auto-generated notice to WriteLuauModule output
 - Updated file header names to use full sub-extension (e.g., `MyTest.spec`)

@@ -15,7 +15,6 @@ jobs:
           TITLE="${{ github.event.pull_request.title }}"
           echo "Checking PR title: $TITLE"
 
-          # Must be exactly "Release X.Y.Z"
           if [[ ! "$TITLE" =~ ^Release\ [0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::error::PR title must be exactly 'Release X.Y.Z' (e.g., 'Release 1.2.3')"
             exit 1
@@ -36,7 +35,6 @@ jobs:
         run: |
           git fetch origin main
 
-          # Get the diff between the PR branch and main
           DIFF=$(git diff origin/main..HEAD)
 
           if [ -n "$DIFF" ]; then
@@ -61,7 +59,7 @@ jobs:
         uses: CompeyDev/setup-rokit@v0.1.2
 
       - name: Check formatting
-        run: lune run ./Submodules/luau-cicd/Scripts/CheckFormatting.luau
+        run: ./Submodules/luau-cicd/Scripts/CheckFormatting.luau
 
   test:
     name: Run tests
@@ -79,7 +77,7 @@ jobs:
         run: wally install
 
       - name: Run tests
-        run: lune run ./Scripts/RunTests.luau
+        run: ./Scripts/RunTests.luau
 
   analyze:
     name: Static analysis
@@ -99,8 +97,34 @@ jobs:
       - name: Setup Lune typedefs
         run: lune setup --no-update-luaurc
 
+      - name: Generate version module
+        run: ./Scripts/GenerateVersion.luau
+
       - name: Run static analysis
-        run: luau-lsp analyze --platform lune --ignore "DevPackages/**" --ignore "Packages/**" --ignore "Submodules/**" .
+        run: ./Submodules/luau-cicd/Scripts/RunStaticAnalysis.luau lune
+
+  json-format:
+    name: Check JSON format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Prettier
+        run: npm install -g prettier
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Check JSON format
+        run: ./Submodules/luau-cicd/Scripts/CheckJsonFormat.luau
 
   version:
     name: Validate version
@@ -116,16 +140,16 @@ jobs:
         uses: CompeyDev/setup-rokit@v0.1.2
 
       - name: Check version update
-        run: lune run ./Submodules/luau-cicd/Scripts/EnsureProperVersionUpdate.luau
+        run: ./Submodules/luau-cicd/Scripts/EnsureProperVersionUpdate.luau
 
       - name: Check version match
-        run: lune run ./Submodules/luau-cicd/Scripts/CheckVersionMatch.luau
+        run: ./Submodules/luau-cicd/Scripts/CheckVersionMatch.luau
 
       - name: Check changelog entry
-        run: lune run ./Submodules/luau-cicd/Scripts/CheckChangelogVersion.luau
+        run: ./Submodules/luau-cicd/Scripts/CheckChangelogVersion.luau
 
       - name: Check changelog format
-        run: lune run ./Submodules/luau-cicd/Scripts/CheckChangelogFormat.luau
+        run: ./Submodules/luau-cicd/Scripts/CheckChangelogFormat.luau
 
       - name: Verify PR title matches VERSION
         run: |
