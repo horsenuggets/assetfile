@@ -60,7 +60,7 @@ function Watcher.watch(mappings: { Config.AssetMapping }, apiKeys: { [number]: s
     -- Build initial snapshot of file mtimes for each mapping
     local snapshots: { [number]: FileSnapshot } = {}
     for i, mapping in mappings do
-        snapshots[i] = takeSnapshot(mapping.assets)
+        snapshots[i] = takeSnapshot(mapping.Assets)
     end
 
     -- Run initial sync
@@ -78,10 +78,10 @@ function Watcher.watch(mappings: { Config.AssetMapping }, apiKeys: { [number]: s
     -- Poll for changes using modification times
     while task.wait(interval) do
         for i, mapping in mappings do
-            local currentSnapshot = takeSnapshot(mapping.assets)
+            local currentSnapshot = takeSnapshot(mapping.Assets)
 
             if hasChanges(snapshots[i], currentSnapshot) then
-                print(Chalk.dim(`Changes detected in "{mapping.assets}", syncing...`))
+                print(Chalk.dim(`Changes detected in "{mapping.Assets}", syncing...`))
                 Sync.run(mapping, apiKeys[i])
                 snapshots[i] = currentSnapshot
             end

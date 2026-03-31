@@ -16,35 +16,35 @@ local t = require("@packages/t")
 local CONFIG_FILENAME = "assetfile.json"
 
 export type AssetMapping = {
-    apiKeyEnvName: string?,
-    assets: string,
-    output: string,
-    creator: CreatorConfig,
+    ApiKeyEnvName: string?,
+    Assets: string,
+    Output: string,
+    Creator: CreatorConfig,
 }
 
 export type CreatorConfig = {
-    userId: string?,
-    groupId: string?,
+    UserId: string?,
+    GroupId: string?,
 }
 
 export type Config = {
-    mappings: { AssetMapping },
+    Mappings: { AssetMapping },
 }
 
 local validateCreator = t.interface({
-    userId = t.optional(t.string),
-    groupId = t.optional(t.string),
+    UserId = t.optional(t.string),
+    GroupId = t.optional(t.string),
 })
 
 local validateMapping = t.interface({
-    apiKeyEnvName = t.optional(t.string),
-    assets = t.string,
-    output = t.string,
-    creator = validateCreator,
+    ApiKeyEnvName = t.optional(t.string),
+    Assets = t.string,
+    Output = t.string,
+    Creator = validateCreator,
 })
 
 local validateConfig = t.interface({
-    mappings = t.array(validateMapping),
+    Mappings = t.array(validateMapping),
 })
 
 local Config = {}
@@ -60,15 +60,15 @@ function Config.load(path: string?): Config
     local ok, err = validateConfig(data)
     assert(ok, `Invalid config file "{configPath}"\n{err}`)
 
-    -- Validate that each creator has exactly one of userId or groupId
-    for i, mapping in data.mappings do
-        local creator = mapping.creator
-        local hasUserId = creator.userId ~= nil
-        local hasGroupId = creator.groupId ~= nil
-        assert(hasUserId or hasGroupId, `Mapping {i} must have either "userId" or "groupId" in creator.`)
+    -- Validate that each Creator has exactly one of UserId or GroupId
+    for i, mapping in data.Mappings do
+        local creator = mapping.Creator
+        local hasUserId = creator.UserId ~= nil
+        local hasGroupId = creator.GroupId ~= nil
+        assert(hasUserId or hasGroupId, `Mapping {i} must have either "UserId" or "GroupId" in Creator.`)
         assert(
             not (hasUserId and hasGroupId),
-            `Mapping {i} must have only one of "userId" or "groupId" in creator, not both.`
+            `Mapping {i} must have only one of "UserId" or "GroupId" in Creator, not both.`
         )
     end
 
