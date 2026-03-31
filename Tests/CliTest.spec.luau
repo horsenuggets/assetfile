@@ -59,10 +59,10 @@ return function()
                 expect(result.ok).to.equal(true)
 
                 local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
-                expect(config.mappings[1].assets).to.equal("images")
-                expect(config.mappings[1].output).to.equal("Images.luau")
-                expect(config.mappings[1].creator.userId).to.equal("12345")
-                expect(config.mappings[1].apiKeyEnvName).to.equal("MY_KEY")
+                expect(config.Mappings[1].Assets).to.equal("images")
+                expect(config.Mappings[1].Output).to.equal("Images.luau")
+                expect(config.Mappings[1].Creator.UserId).to.equal("12345")
+                expect(config.Mappings[1].ApiKeyEnvName).to.equal("MY_KEY")
             end)
 
             it("should create config with group-id flag", function()
@@ -81,11 +81,11 @@ return function()
                 expect(result.ok).to.equal(true)
 
                 local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
-                expect(config.mappings[1].creator.groupId).to.equal("67890")
-                expect(config.mappings[1].apiKeyEnvName).to.equal(nil)
+                expect(config.Mappings[1].Creator.GroupId).to.equal("67890")
+                expect(config.Mappings[1].ApiKeyEnvName).to.equal(nil)
             end)
 
-            it("should omit apiKeyEnvName when set to ROBLOX_API_KEY", function()
+            it("should omit ApiKeyEnvName when set to ROBLOX_API_KEY", function()
                 local dir = createTempDir(BASE_NAME)
                 local result = process.exec(BINARY_PATH, {
                     "init",
@@ -99,7 +99,7 @@ return function()
                 expect(result.ok).to.equal(true)
 
                 local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
-                expect(config.mappings[1].apiKeyEnvName).to.equal(nil)
+                expect(config.Mappings[1].ApiKeyEnvName).to.equal(nil)
             end)
 
             it("should use default values for assets and output", function()
@@ -114,8 +114,8 @@ return function()
                 expect(result.ok).to.equal(true)
 
                 local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
-                expect(config.mappings[1].assets).to.equal("Assets")
-                expect(config.mappings[1].output).to.equal("Assets.luau")
+                expect(config.Mappings[1].Assets).to.equal("Assets")
+                expect(config.Mappings[1].Output).to.equal("Assets.luau")
             end)
 
             it("should detect existing config", function()
@@ -123,7 +123,7 @@ return function()
                 fs.writeFile(
                     `{dir}/assetfile.json`,
                     serde.encode("json", {
-                        mappings = {},
+                        Mappings = {},
                     })
                 )
 

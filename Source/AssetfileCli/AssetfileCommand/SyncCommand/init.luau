@@ -29,8 +29,8 @@ return Commandline.Command.new({
         local totalUpdated = 0
         local totalUploaded = 0
 
-        for _, mapping in config.mappings do
-            local apiKey = resolveApiKey(mapping.apiKeyEnvName)
+        for _, mapping in config.Mappings do
+            local apiKey = resolveApiKey(mapping.ApiKeyEnvName)
             local result = Sync.run(mapping, apiKey)
             totalFailed += result.Failed
             totalRemoved += result.Removed

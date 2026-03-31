@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+- Changed all type fields and table keys from camelCase to PascalCase
+- Changed assetfile.json config keys to PascalCase (breaking change)
+- Changed .assetfile-cache.json keys to PascalCase
+- Updated README with improved documentation and PascalCase examples
+
 ## 0.1.0
 - Modernize CLI into modular command architecture matching rbxstudio-cli pattern
 - Add completion, version generation, and build scripts

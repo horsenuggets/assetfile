@@ -36,83 +36,83 @@ return function()
 
             it("should return true when config exists", function()
                 local dir = createTempDir(BASE_NAME)
-                local path = writeConfig(dir, { mappings = {} })
+                local path = writeConfig(dir, { Mappings = {} })
                 expect(Config.exists(path)).to.equal(true)
             end)
         end)
 
         describe("load", function()
-            it("should load a valid config with userId creator", function()
+            it("should load a valid config with UserId creator", function()
                 local dir = createTempDir(BASE_NAME)
                 local path = writeConfig(dir, {
-                    mappings = {
+                    Mappings = {
                         {
-                            assets = "assets",
-                            output = "Assets.luau",
-                            creator = { userId = "12345" },
+                            Assets = "assets",
+                            Output = "Assets.luau",
+                            Creator = { UserId = "12345" },
                         },
                     },
                 })
 
                 local config = Config.load(path)
-                expect(#config.mappings).to.equal(1)
-                expect(config.mappings[1].assets).to.equal("assets")
-                expect(config.mappings[1].output).to.equal("Assets.luau")
-                expect(config.mappings[1].creator.userId).to.equal("12345")
+                expect(#config.Mappings).to.equal(1)
+                expect(config.Mappings[1].Assets).to.equal("assets")
+                expect(config.Mappings[1].Output).to.equal("Assets.luau")
+                expect(config.Mappings[1].Creator.UserId).to.equal("12345")
             end)
 
-            it("should load a valid config with groupId creator", function()
+            it("should load a valid config with GroupId creator", function()
                 local dir = createTempDir(BASE_NAME)
                 local path = writeConfig(dir, {
-                    mappings = {
+                    Mappings = {
                         {
-                            assets = "assets",
-                            output = "Assets.luau",
-                            creator = { groupId = "67890" },
+                            Assets = "assets",
+                            Output = "Assets.luau",
+                            Creator = { GroupId = "67890" },
                         },
                     },
                 })
 
                 local config = Config.load(path)
-                expect(config.mappings[1].creator.groupId).to.equal("67890")
+                expect(config.Mappings[1].Creator.GroupId).to.equal("67890")
             end)
 
-            it("should load a config with optional apiKeyEnvName", function()
+            it("should load a config with optional ApiKeyEnvName", function()
                 local dir = createTempDir(BASE_NAME)
                 local path = writeConfig(dir, {
-                    mappings = {
+                    Mappings = {
                         {
-                            apiKeyEnvName = "MY_CUSTOM_KEY",
-                            assets = "assets",
-                            output = "Assets.luau",
-                            creator = { userId = "12345" },
+                            ApiKeyEnvName = "MY_CUSTOM_KEY",
+                            Assets = "assets",
+                            Output = "Assets.luau",
+                            Creator = { UserId = "12345" },
                         },
                     },
                 })
 
                 local config = Config.load(path)
-                expect(config.mappings[1].apiKeyEnvName).to.equal("MY_CUSTOM_KEY")
+                expect(config.Mappings[1].ApiKeyEnvName).to.equal("MY_CUSTOM_KEY")
             end)
 
             it("should support multiple mappings", function()
                 local dir = createTempDir(BASE_NAME)
                 local path = writeConfig(dir, {
-                    mappings = {
+                    Mappings = {
                         {
-                            assets = "images",
-                            output = "Images.luau",
-                            creator = { userId = "12345" },
+                            Assets = "images",
+                            Output = "Images.luau",
+                            Creator = { UserId = "12345" },
                         },
                         {
-                            assets = "sounds",
-                            output = "Sounds.luau",
-                            creator = { groupId = "67890" },
+                            Assets = "sounds",
+                            Output = "Sounds.luau",
+                            Creator = { GroupId = "67890" },
                         },
                     },
                 })
 
                 local config = Config.load(path)
-                expect(#config.mappings).to.equal(2)
+                expect(#config.Mappings).to.equal(2)
             end)
 
             it("should error when config file does not exist", function()
@@ -122,14 +122,14 @@ return function()
                 end).to.throw()
             end)
 
-            it("should error when creator has both userId and groupId", function()
+            it("should error when creator has both UserId and GroupId", function()
                 local dir = createTempDir(BASE_NAME)
                 local path = writeConfig(dir, {
-                    mappings = {
+                    Mappings = {
                         {
-                            assets = "assets",
-                            output = "Assets.luau",
-                            creator = { userId = "12345", groupId = "67890" },
+                            Assets = "assets",
+                            Output = "Assets.luau",
+                            Creator = { UserId = "12345", GroupId = "67890" },
                         },
                     },
                 })
@@ -139,14 +139,14 @@ return function()
                 end).to.throw()
             end)
 
-            it("should error when creator has neither userId nor groupId", function()
+            it("should error when creator has neither UserId nor GroupId", function()
                 local dir = createTempDir(BASE_NAME)
                 local path = writeConfig(dir, {
-                    mappings = {
+                    Mappings = {
                         {
-                            assets = "assets",
-                            output = "Assets.luau",
-                            creator = {},
+                            Assets = "assets",
+                            Output = "Assets.luau",
+                            Creator = {},
                         },
                     },
                 })
@@ -156,7 +156,7 @@ return function()
                 end).to.throw()
             end)
 
-            it("should error when mappings is missing", function()
+            it("should error when Mappings is missing", function()
                 local dir = createTempDir(BASE_NAME)
                 local path = writeConfig(dir, {})
 

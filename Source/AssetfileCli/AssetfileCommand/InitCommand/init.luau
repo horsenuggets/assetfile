@@ -105,23 +105,23 @@ return Commandline.Command.new({
 
         local creator: { [string]: string } = {}
         if userId then
-            creator.userId = userId
+            creator.UserId = userId
         else
-            creator.groupId = groupId :: string
+            creator.GroupId = groupId :: string
         end
 
         local mapping: { [string]: any } = {
-            assets = assetsDir,
-            creator = creator,
-            output = outputPath,
+            Assets = assetsDir,
+            Creator = creator,
+            Output = outputPath,
         }
 
         if apiKeyEnvName and apiKeyEnvName ~= "ROBLOX_API_KEY" then
-            mapping.apiKeyEnvName = apiKeyEnvName
+            mapping.ApiKeyEnvName = apiKeyEnvName
         end
 
         local config = {
-            mappings = { mapping },
+            Mappings = { mapping },
         }
 
         fs.writeFile("assetfile.json", serde.encode("json", config))
