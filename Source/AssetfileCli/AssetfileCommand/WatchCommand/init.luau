@@ -32,10 +32,10 @@ return Commandline.Command.new({
 
         -- Validate all API keys upfront before starting the watcher
         local apiKeys: { [number]: string } = {}
-        for i, mapping in config.mappings do
-            apiKeys[i] = resolveApiKey(mapping.apiKeyEnvName)
+        for i, mapping in config.Mappings do
+            apiKeys[i] = resolveApiKey(mapping.ApiKeyEnvName)
         end
 
-        Watcher.watch(config.mappings, apiKeys, flags.interval.Value)
+        Watcher.watch(config.Mappings, apiKeys, flags.interval.Value)
     end,
 })

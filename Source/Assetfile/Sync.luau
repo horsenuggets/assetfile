@@ -32,8 +32,8 @@ local Sync = {}
 function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
     assert(t.string(apiKey))
 
-    local assetsDir = mapping.assets
-    local outputPath = mapping.output
+    local assetsDir = mapping.Assets
+    local outputPath = mapping.Output
 
     assert(fs.isDir(assetsDir), `Assets directory "{assetsDir}" does not exist.`)
 
@@ -67,10 +67,10 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
 
     -- Collect files that need uploading
     type UploadJob = {
-        relativePath: string,
-        fullPath: string,
-        hash: string,
-        isUpdate: boolean,
+        RelativePath: string,
+        FullPath: string,
+        Hash: string,
+        IsUpdate: boolean,
     }
 
     local jobs: { UploadJob } = {}
@@ -79,26 +79,26 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
         local hash = FileUtils.hashFile(fullPath)
         local existing = assetMap:Get(relativePath)
 
-        if existing and existing.hash == hash then
+        if existing and existing.Hash == hash then
             continue
         end
 
         table.insert(jobs, {
-            relativePath = relativePath,
-            fullPath = fullPath,
-            hash = hash,
-            isUpdate = existing ~= nil,
+            RelativePath = relativePath,
+            FullPath = fullPath,
+            Hash = hash,
+            IsUpdate = existing ~= nil,
         })
     end
 
     -- Upload all changed files in parallel, collecting results per-job
     type JobResult = {
         ok: boolean,
-        relativePath: string,
-        hash: string,
-        isUpdate: boolean,
-        assetId: string?,
-        errorMessage: string?,
+        RelativePath: string,
+        Hash: string,
+        IsUpdate: boolean,
+        AssetId: string?,
+        ErrorMessage: string?,
     }
 
     local jobResults: { JobResult? } = table.create(#jobs)
@@ -116,37 +116,37 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
 
             activeCount += 1
             task.spawn(function()
-                local displayName = job.relativePath:match("([^/]+)%..+$") or job.relativePath
-                local fileContent = fs.readFile(job.fullPath)
-                local assetType = RobloxApi.getAssetType(job.relativePath)
-                assert(assetType, `Could not determine asset type for "{job.relativePath}".`)
+                local displayName = job.RelativePath:match("([^/]+)%..+$") or job.RelativePath
+                local fileContent = fs.readFile(job.FullPath)
+                local assetType = RobloxApi.getAssetType(job.RelativePath)
+                assert(assetType, `Could not determine asset type for "{job.RelativePath}".`)
 
                 local ok, uploadResult = pcall(function()
                     return api:Upload({
                         AssetType = assetType,
                         DisplayName = displayName,
                         Description = "Uploaded by Assetfile.",
-                        Creator = mapping.creator,
+                        Creator = mapping.Creator,
                         FileContent = fileContent,
-                        Filename = job.relativePath,
+                        Filename = job.RelativePath,
                     })
                 end)
 
                 if ok then
                     jobResults[i] = {
                         ok = true,
-                        relativePath = job.relativePath,
-                        hash = job.hash,
-                        isUpdate = job.isUpdate,
-                        assetId = uploadResult.AssetId,
+                        RelativePath = job.RelativePath,
+                        Hash = job.Hash,
+                        IsUpdate = job.IsUpdate,
+                        AssetId = uploadResult.AssetId,
                     }
                 else
                     jobResults[i] = {
                         ok = false,
-                        relativePath = job.relativePath,
-                        hash = job.hash,
-                        isUpdate = job.isUpdate,
-                        errorMessage = tostring(uploadResult),
+                        RelativePath = job.RelativePath,
+                        Hash = job.Hash,
+                        IsUpdate = job.IsUpdate,
+                        ErrorMessage = tostring(uploadResult),
                     }
                 end
 
@@ -166,19 +166,19 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
     -- Process results on the main thread
     for _, jobResult in jobResults do
         if jobResult.ok then
-            assetMap:Set(jobResult.relativePath, jobResult.assetId :: string, jobResult.hash)
-            if jobResult.isUpdate then
+            assetMap:Set(jobResult.RelativePath, jobResult.AssetId :: string, jobResult.Hash)
+            if jobResult.IsUpdate then
                 result.Updated += 1
-                print(`{Chalk.blue("Updated")} "{jobResult.relativePath}" (asset {jobResult.assetId})`)
+                print(`{Chalk.blue("Updated")} "{jobResult.RelativePath}" (asset {jobResult.AssetId})`)
             else
                 result.Uploaded += 1
-                print(`{Chalk.green("Uploaded")} "{jobResult.relativePath}" (asset {jobResult.assetId})`)
+                print(`{Chalk.green("Uploaded")} "{jobResult.RelativePath}" (asset {jobResult.AssetId})`)
             end
         else
             result.Failed += 1
-            local errorMsg = `Failed to sync "{jobResult.relativePath}": {jobResult.errorMessage}`
+            local errorMsg = `Failed to sync "{jobResult.RelativePath}": {jobResult.ErrorMessage}`
             table.insert(result.Errors, errorMsg)
-            print(`{Chalk.red("Failed")} "{jobResult.relativePath}": {jobResult.errorMessage}`)
+            print(`{Chalk.red("Failed")} "{jobResult.RelativePath}": {jobResult.ErrorMessage}`)
         end
     end
 

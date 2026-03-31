@@ -16,8 +16,8 @@ local t = require("@packages/t")
 local CACHE_FILENAME = ".assetfile-cache.json"
 
 export type AssetEntry = {
-    assetId: string,
-    hash: string,
+    AssetId: string,
+    Hash: string,
 }
 
 export type AssetMap = {
@@ -66,8 +66,8 @@ function AssetMap.Set(self: AssetMap, relativePath: string, assetId: string, has
     assert(t.string(hash));
 
     (self :: any)._entries[relativePath] = {
-        assetId = assetId,
-        hash = hash,
+        AssetId = assetId,
+        Hash = hash,
     }
 end
 
@@ -114,7 +114,7 @@ function AssetMap.WriteLuauModule(self: AssetMap, outputPath: string): ()
     }
     for _, key in keys do
         local entry = entries[key]
-        table.insert(lines, `\t["{key}"] = "rbxassetid://{entry.assetId}",`)
+        table.insert(lines, `\t["{key}"] = "rbxassetid://{entry.AssetId}",`)
     end
     table.insert(lines, "}\n")
 

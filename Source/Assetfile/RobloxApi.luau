@@ -23,8 +23,8 @@ local INITIAL_RETRY_DELAY = 2
 export type AssetType = "Audio" | "Image" | "Model"
 
 export type CreatorInfo = {
-    userId: string?,
-    groupId: string?,
+    UserId: string?,
+    GroupId: string?,
 }
 
 export type UploadRequest = {
@@ -147,10 +147,10 @@ function RobloxApi.Upload(self: RobloxApi, request: UploadRequest): UploadResult
     assert(t.string(request.Filename))
 
     local creatorContext: { [string]: any } = { creator = {} }
-    if request.Creator.userId then
-        creatorContext.creator.userId = request.Creator.userId
+    if request.Creator.UserId then
+        creatorContext.creator.userId = request.Creator.UserId
     else
-        creatorContext.creator.groupId = request.Creator.groupId
+        creatorContext.creator.groupId = request.Creator.GroupId
     end
 
     local metadata = serde.encode("json", {
