@@ -3,13 +3,22 @@
     "tree": {
         "$className": "Folder",
         "DevPackages": {
-            "$path": "DevPackages"
+            "$path": {
+                "optional": "DevPackages"
+            }
         },
         "Packages": {
-            "$path": "Packages"
+            "$path": {
+                "optional": "Packages"
+            }
         },
         "Scripts": {
             "$path": "Scripts"
+        },
+        "ServerPackages": {
+            "$path": {
+                "optional": "ServerPackages"
+            }
         },
         "Source": {
             "$path": "Source"
