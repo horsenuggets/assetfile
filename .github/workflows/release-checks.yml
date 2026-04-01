@@ -163,3 +163,31 @@ jobs:
           fi
 
           echo "PR title matches VERSION file."
+
+  build-test:
+    name: Build test ${{ matrix.target }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - linux-x86_64
+          - linux-aarch64
+          - macos-x86_64
+          - macos-aarch64
+          - windows-x86_64
+          - windows-aarch64
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install tooling
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Install packages
+        run: wally install
+
+      - name: Build
+        run: ./Scripts/BuildExecutable.luau ${{ matrix.target }}

@@ -37,12 +37,6 @@ local function buildExecutable()
         Name = OUTPUT_NAME,
         EntryPoint = "Source/AssetfileCli",
         Target = target,
-        AliasDirs = {
-            { alias = "@assetfile", dir = "Source/Assetfile" },
-            { alias = "@assetfilecli", dir = "Source/AssetfileCli" },
-            { alias = "@packages", dir = "Packages" },
-            { alias = "@tests", dir = "Tests" },
-        },
     })
 
     local outputPath = `{PROJECT_ROOT}/Build/{OUTPUT_NAME}`
