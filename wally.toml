@@ -10,7 +10,7 @@ repository = "https://github.com/horsenuggets/assetfile"
 
 [dependencies]
 Chalk = "horsenuggets/chalk-luau@1.0.0"
-Commandline = "horsenuggets/commandline-luau@0.0.15"
+Commandline = "horsenuggets/commandline-luau@0.2.1"
 Dotenv = "horsenuggets/dotenv-luau@0.1.3"
 HashLib = "horsenuggets/hashlib@0.0.2"
 t = "horsenuggets/t@3.1.1-horse.0.3"
