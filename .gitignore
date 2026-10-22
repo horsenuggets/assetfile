@@ -28,6 +28,7 @@
 aftman.toml
 
 # Project
+/CONTEXT.md
 /TODO.md
 
 # Repo-specific
@@ -39,3 +40,7 @@ __VERSION__.luau
 .terraform/
 *.tfstate
 *.tfstate.backup
+
+# Worktrees
+/.worktrees/
+/.wt/
