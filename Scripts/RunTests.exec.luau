@@ -2,12 +2,12 @@
 
 --[[
 
-RunTests
+RunTests.exec
 
 Executes all test suites and exits with appropriate status code.
 Optionally pass a test name as an argument to run only that test suite.
 
-[Usage] lune run ./Scripts/RunTests.luau [TestName]
+[Usage] ./Scripts/RunTests.exec.luau [TestName]
 
 --]]
 
@@ -23,7 +23,9 @@ local TESTS = {
     { Name = "RobloxApiTest", Func = require("../Tests/RobloxApiTest.spec") },
 }
 
-local function runTests()
+const RunTests = {}
+
+function RunTests.exec()
     local filterName = process.args[1]
     local testsToRun = TESTS
 
@@ -50,4 +52,4 @@ local function runTests()
     process.exit(if passed then 0 else 1)
 end
 
-runTests()
+RunTests.exec()

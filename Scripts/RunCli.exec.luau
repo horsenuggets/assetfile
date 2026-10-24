@@ -2,17 +2,19 @@
 
 --[[
 
-RunCli
+RunCli.exec
 
 Runs the Assetfile CLI directly from source without building.
 
-[Usage] lune run ./Scripts/RunCli.luau
+[Usage] ./Scripts/RunCli.exec.luau [args...]
 
 --]]
 
 local process = require("@lune/process")
 
-local function runCli()
+const RunCli = {}
+
+function RunCli.exec()
     local args = { "run", "./Source/AssetfileCli" }
     for _, arg in process.args do
         table.insert(args, arg)
@@ -23,4 +25,4 @@ local function runCli()
     })
 end
 
-runCli()
+RunCli.exec()

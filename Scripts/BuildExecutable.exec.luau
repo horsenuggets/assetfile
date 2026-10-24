@@ -2,7 +2,7 @@
 
 --[[
 
-BuildExecutable
+BuildExecutable.exec
 
 Compiles the assetfile CLI to a standalone executable. Embeds the VERSION
 at build time since compiled executables cannot read files at runtime.
@@ -15,10 +15,12 @@ local fs = require("@lune/fs")
 local process = require("@lune/process")
 
 local PROJECT_ROOT = tostring(script.Parent.Parent)
-local GENERATE_VERSION_SCRIPT = `{PROJECT_ROOT}/Scripts/GenerateVersion.luau`
+local GENERATE_VERSION_SCRIPT = `{PROJECT_ROOT}/Scripts/GenerateVersion.exec.luau`
 local OUTPUT_NAME = "assetfile"
 
-local function buildExecutable()
+const BuildExecutable = {}
+
+function BuildExecutable.exec()
     local target = process.args[1]
 
     print()
@@ -55,4 +57,4 @@ local function buildExecutable()
     print(Chalk.bold(Chalk.greenBright("Build completed successfully!")))
 end
 
-buildExecutable()
+BuildExecutable.exec()
