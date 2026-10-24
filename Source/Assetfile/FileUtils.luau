@@ -7,19 +7,19 @@ detecting changes between syncs.
 
 --]]
 
-local fs = require("@lune/fs")
+const fs = require("@lune/fs")
 
-local HashLib = require("@packages/HashLib")
-local t = require("@packages/t")
+const HashLib = require("@packages/HashLib")
+const t = require("@packages/t")
 
-local RobloxApi = require("@assetfile/RobloxApi")
+const RobloxApi = require("@assetfile/RobloxApi")
 
-local FileUtils = {}
+const FileUtils = {}
 
 function FileUtils.hashFile(filePath: string): string
     assert(t.string(filePath))
 
-    local content = fs.readFile(filePath)
+    const content = fs.readFile(filePath)
     return HashLib.sha256(content)
 end
 
@@ -31,12 +31,12 @@ function FileUtils.scanDirectory(directory: string): { string }
     assert(t.string(directory))
     assert(fs.isDir(directory), `Directory "{directory}" does not exist.`)
 
-    local results = {}
+    const results = {}
 
-    local function scan(dir: string, prefix: string)
+    const function scan(dir: string, prefix: string)
         for _, name in fs.readDir(dir) do
-            local fullPath = `{dir}/{name}`
-            local relativePath = if prefix == "" then name else `{prefix}/{name}`
+            const fullPath = `{dir}/{name}`
+            const relativePath = if prefix == "" then name else `{prefix}/{name}`
 
             if fs.isDir(fullPath) then
                 scan(fullPath, relativePath)

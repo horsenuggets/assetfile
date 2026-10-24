@@ -8,12 +8,12 @@ game code can require.
 
 --]]
 
-local fs = require("@lune/fs")
-local serde = require("@lune/serde")
+const fs = require("@lune/fs")
+const serde = require("@lune/serde")
 
-local t = require("@packages/t")
+const t = require("@packages/t")
 
-local CACHE_FILENAME = ".assetfile-cache.json"
+const CACHE_FILENAME = ".assetfile-cache.json"
 
 export type AssetEntry = {
     AssetId: string,
@@ -29,24 +29,24 @@ export type AssetMap = {
     WriteLuauModule: (self: AssetMap, outputPath: string) -> (),
 }
 
-local AssetMap = {}
+const AssetMap = {}
 AssetMap.__index = AssetMap
 
 function AssetMap.new(cacheDir: string): AssetMap
     assert(t.string(cacheDir))
 
-    local cachePath = `{cacheDir}/{CACHE_FILENAME}`
+    const cachePath = `{cacheDir}/{CACHE_FILENAME}`
     local entries: { [string]: AssetEntry } = {}
 
     if fs.isFile(cachePath) then
-        local content = fs.readFile(cachePath)
-        local ok, data = pcall(serde.decode, "json" :: any, content)
+        const content = fs.readFile(cachePath)
+        const ok, data = pcall(serde.decode, "json" :: any, content)
         if ok and type(data) == "table" then
             entries = data
         end
     end
 
-    local self = setmetatable({
+    const self = setmetatable({
         _entries = entries,
         _cachePath = cachePath,
         _cacheDir = cacheDir,
@@ -81,7 +81,7 @@ function AssetMap.GetAll(self: AssetMap): { [string]: AssetEntry }
 end
 
 function AssetMap.Save(self: AssetMap): ()
-    local cacheDir = (self :: any)._cacheDir
+    const cacheDir = (self :: any)._cacheDir
     if not fs.isDir(cacheDir) then
         fs.writeDir(cacheDir)
     end
@@ -91,17 +91,17 @@ end
 function AssetMap.WriteLuauModule(self: AssetMap, outputPath: string): ()
     assert(t.string(outputPath))
 
-    local entries = (self :: any)._entries :: { [string]: AssetEntry }
+    const entries = (self :: any)._entries :: { [string]: AssetEntry }
 
     -- Sort keys for deterministic output
-    local keys = {}
+    const keys = {}
     for key in entries do
         table.insert(keys, key)
     end
     table.sort(keys)
 
-    local fileName = string.match(outputPath, "([^/]+)%.luau$") or "Assets"
-    local lines = {
+    const fileName = string.match(outputPath, "([^/]+)%.luau$") or "Assets"
+    const lines = {
         "--[[",
         "",
         fileName,
@@ -113,7 +113,7 @@ function AssetMap.WriteLuauModule(self: AssetMap, outputPath: string): ()
         "return {",
     }
     for _, key in keys do
-        local entry = entries[key]
+        const entry = entries[key]
         table.insert(lines, `\t["{key}"] = "rbxassetid://{entry.AssetId}",`)
     end
     table.insert(lines, "}\n")

@@ -6,9 +6,9 @@ Recursively removes a directory and all its contents.
 
 --]]
 
-local process = require("@lune/process")
+const process = require("@lune/process")
 
-local function removeDirectory(path: string)
+const function removeDirectory(path: string)
     process.exec("rm", { "-rf", path })
 end
 

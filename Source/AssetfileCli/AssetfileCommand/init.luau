@@ -7,12 +7,12 @@ managing local asset files synced with Roblox.
 
 --]]
 
-local Commandline = require("@packages/Commandline")
+const Commandline = require("@packages/Commandline")
 
-local InitCommand = require("@self/InitCommand")
-local SyncCommand = require("@self/SyncCommand")
-local WatchCommand = require("@self/WatchCommand")
-local __VERSION__ = require("@self/__VERSION__")
+const InitCommand = require("@self/InitCommand")
+const SyncCommand = require("@self/SyncCommand")
+const WatchCommand = require("@self/WatchCommand")
+const __VERSION__ = require("@self/__VERSION__")
 
 return Commandline.Command.new({
     Name = "assetfile",

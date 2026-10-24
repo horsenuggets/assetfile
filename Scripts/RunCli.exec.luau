@@ -10,12 +10,12 @@ Runs the Assetfile CLI directly from source without building.
 
 --]]
 
-local process = require("@lune/process")
+const process = require("@lune/process")
 
 const RunCli = {}
 
 function RunCli.exec()
-    local args = { "run", "./Source/AssetfileCli" }
+    const args = { "run", "./Source/AssetfileCli" }
     for _, arg in process.args do
         table.insert(args, arg)
     end

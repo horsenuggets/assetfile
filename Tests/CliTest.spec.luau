@@ -8,19 +8,19 @@ behavior.
 
 --]]
 
-local fs = require("@lune/fs")
-local process = require("@lune/process")
-local serde = require("@lune/serde")
+const fs = require("@lune/fs")
+const process = require("@lune/process")
+const serde = require("@lune/serde")
 
-local createTempDir = require("./Helpers/createTempDir")
-local removeDirectory = require("./Helpers/removeDirectory")
+const createTempDir = require("./Helpers/createTempDir")
+const removeDirectory = require("./Helpers/removeDirectory")
 
-local BASE_NAME = "cli"
-local BINARY_PATH = `{process.cwd}Build/assetfile`
+const BASE_NAME = "cli"
+const BINARY_PATH = `{process.cwd}Build/assetfile`
 
 return function()
     beforeAll(function()
-        local result = process.exec(`{process.cwd}Scripts/BuildExecutable.exec.luau`)
+        const result = process.exec(`{process.cwd}Scripts/BuildExecutable.exec.luau`)
         assert(result.ok, `Failed to build CLI binary: {result.stderr}`)
         assert(fs.isFile(BINARY_PATH), "Failed to build CLI binary.")
     end)
@@ -32,8 +32,8 @@ return function()
     describe("CLI", function()
         describe("init", function()
             it("should error when no input is provided", function()
-                local dir = createTempDir(BASE_NAME)
-                local result = process.exec(BINARY_PATH, { "init" }, {
+                const dir = createTempDir(BASE_NAME)
+                const result = process.exec(BINARY_PATH, { "init" }, {
                     cwd = dir,
                 })
                 -- init requires interactive stdio prompts, so it should
@@ -42,8 +42,8 @@ return function()
             end)
 
             it("should create config with all flags", function()
-                local dir = createTempDir(BASE_NAME)
-                local result = process.exec(BINARY_PATH, {
+                const dir = createTempDir(BASE_NAME)
+                const result = process.exec(BINARY_PATH, {
                     "init",
                     "--user-id",
                     "12345",
@@ -58,7 +58,7 @@ return function()
                 })
                 expect(result.ok).to.equal(true)
 
-                local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
+                const config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
                 expect(config.Mappings[1].Assets).to.equal("images")
                 expect(config.Mappings[1].Output).to.equal("Images.luau")
                 expect(config.Mappings[1].Creator.UserId).to.equal("12345")
@@ -66,8 +66,8 @@ return function()
             end)
 
             it("should create config with group-id flag", function()
-                local dir = createTempDir(BASE_NAME)
-                local result = process.exec(BINARY_PATH, {
+                const dir = createTempDir(BASE_NAME)
+                const result = process.exec(BINARY_PATH, {
                     "init",
                     "--group-id",
                     "67890",
@@ -80,14 +80,14 @@ return function()
                 })
                 expect(result.ok).to.equal(true)
 
-                local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
+                const config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
                 expect(config.Mappings[1].Creator.GroupId).to.equal("67890")
                 expect(config.Mappings[1].ApiKeyEnvName).to.equal(nil)
             end)
 
             it("should omit ApiKeyEnvName when set to ROBLOX_API_KEY", function()
-                local dir = createTempDir(BASE_NAME)
-                local result = process.exec(BINARY_PATH, {
+                const dir = createTempDir(BASE_NAME)
+                const result = process.exec(BINARY_PATH, {
                     "init",
                     "--user-id",
                     "12345",
@@ -98,13 +98,13 @@ return function()
                 })
                 expect(result.ok).to.equal(true)
 
-                local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
+                const config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
                 expect(config.Mappings[1].ApiKeyEnvName).to.equal(nil)
             end)
 
             it("should use default values for assets and output", function()
-                local dir = createTempDir(BASE_NAME)
-                local result = process.exec(BINARY_PATH, {
+                const dir = createTempDir(BASE_NAME)
+                const result = process.exec(BINARY_PATH, {
                     "init",
                     "--user-id",
                     "12345",
@@ -113,13 +113,13 @@ return function()
                 })
                 expect(result.ok).to.equal(true)
 
-                local config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
+                const config = serde.decode("json", fs.readFile(`{dir}/assetfile.json`))
                 expect(config.Mappings[1].Assets).to.equal("Assets")
                 expect(config.Mappings[1].Output).to.equal("Assets.luau")
             end)
 
             it("should detect existing config", function()
-                local dir = createTempDir(BASE_NAME)
+                const dir = createTempDir(BASE_NAME)
                 fs.writeFile(
                     `{dir}/assetfile.json`,
                     serde.encode("json", {
@@ -127,7 +127,7 @@ return function()
                     })
                 )
 
-                local result = process.exec(BINARY_PATH, { "init" }, {
+                const result = process.exec(BINARY_PATH, { "init" }, {
                     cwd = dir,
                 })
                 expect(result.ok).to.equal(true)
@@ -137,8 +137,8 @@ return function()
 
         describe("sync", function()
             it("should error when no config exists", function()
-                local dir = createTempDir(BASE_NAME)
-                local result = process.exec(BINARY_PATH, { "sync" }, {
+                const dir = createTempDir(BASE_NAME)
+                const result = process.exec(BINARY_PATH, { "sync" }, {
                     cwd = dir,
                 })
                 expect(result.ok).to.equal(false)
@@ -148,14 +148,14 @@ return function()
 
         describe("unknown command", function()
             it("should show an error message for unknown commands", function()
-                local result = process.exec(BINARY_PATH, { "nonexistent" })
+                const result = process.exec(BINARY_PATH, { "nonexistent" })
                 expect(result.stdout:find("Unknown subcommand")).to.be.ok()
             end)
         end)
 
         describe("no arguments", function()
             it("should show help when no command is provided", function()
-                local result = process.exec(BINARY_PATH, {})
+                const result = process.exec(BINARY_PATH, {})
                 expect(result.ok).to.equal(true)
                 expect(result.stdout:find("assetfile")).to.be.ok()
             end)

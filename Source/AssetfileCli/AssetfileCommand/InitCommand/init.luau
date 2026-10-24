@@ -7,13 +7,13 @@ prompts and non-interactive mode via flags.
 
 --]]
 
-local fs = require("@lune/fs")
-local serde = require("@lune/serde")
-local stdio = require("@lune/stdio")
+const fs = require("@lune/fs")
+const serde = require("@lune/serde")
+const stdio = require("@lune/stdio")
 
-local Commandline = require("@packages/Commandline")
+const Commandline = require("@packages/Commandline")
 
-local Config = require("@assetfile/Config")
+const Config = require("@assetfile/Config")
 
 return Commandline.Command.new({
     Name = "init",
@@ -58,10 +58,10 @@ return Commandline.Command.new({
 
         local userId = flags["user-id"].Value :: string?
         local groupId = flags["group-id"].Value :: string?
-        local nonInteractive = userId ~= nil or groupId ~= nil
+        const nonInteractive = userId ~= nil or groupId ~= nil
 
         if not userId and not groupId then
-            local creatorType = stdio.prompt("select", "Creator type", { "User ID", "Group ID" })
+            const creatorType = stdio.prompt("select", "Creator type", { "User ID", "Group ID" })
             if creatorType == 1 then
                 userId = stdio.prompt("text", "Roblox user ID")
                 assert(#userId > 0, "Must provide a user ID.")
@@ -103,14 +103,14 @@ return Commandline.Command.new({
             end
         end
 
-        local creator: { [string]: string } = {}
+        const creator: { [string]: string } = {}
         if userId then
             creator.UserId = userId
         else
             creator.GroupId = groupId :: string
         end
 
-        local mapping: { [string]: any } = {
+        const mapping: { [string]: any } = {
             Assets = assetsDir,
             Creator = creator,
             Output = outputPath,
@@ -120,7 +120,7 @@ return Commandline.Command.new({
             mapping.ApiKeyEnvName = apiKeyEnvName
         end
 
-        local config = {
+        const config = {
             Mappings = { mapping },
         }
 

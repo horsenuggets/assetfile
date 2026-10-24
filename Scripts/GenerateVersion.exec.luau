@@ -10,13 +10,13 @@ compiled executables cannot read files.
 
 --]]
 
-local Chalk = require("@packages/Chalk")
-local fs = require("@lune/fs")
-local process = require("@lune/process")
+const Chalk = require("@packages/Chalk")
+const fs = require("@lune/fs")
+const process = require("@lune/process")
 
-local PROJECT_ROOT = tostring(script.Parent.Parent)
-local VERSION_FILE = `{PROJECT_ROOT}/VERSION`
-local VERSION_MODULE = `{PROJECT_ROOT}/Source/AssetfileCli/AssetfileCommand/__VERSION__.luau`
+const PROJECT_ROOT = tostring(script.Parent.Parent)
+const VERSION_FILE = `{PROJECT_ROOT}/VERSION`
+const VERSION_MODULE = `{PROJECT_ROOT}/Source/AssetfileCli/AssetfileCommand/__VERSION__.luau`
 
 const GenerateVersion = {}
 
@@ -26,9 +26,9 @@ function GenerateVersion.exec()
         process.exit(1)
     end
 
-    local version = fs.readFile(VERSION_FILE):gsub("%s+", "")
+    const version = fs.readFile(VERSION_FILE):gsub("%s+", "")
 
-    local versionModule = `return "{version}"\n`
+    const versionModule = `return "{version}"\n`
     fs.writeFile(VERSION_MODULE, versionModule)
 
     print(`Generated version module with version {Chalk.bold(Chalk.blueBright(version))}.`)

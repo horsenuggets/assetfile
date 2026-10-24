@@ -9,17 +9,17 @@ with process arguments.
 
 --]]
 
-local process = require("@lune/process")
-local stdio = require("@lune/stdio")
+const process = require("@lune/process")
+const stdio = require("@lune/stdio")
 
-local Commandline = require("@packages/Commandline")
+const Commandline = require("@packages/Commandline")
 
-local AssetfileCommand = require("@assetfilecli/AssetfileCommand")
+const AssetfileCommand = require("@assetfilecli/AssetfileCommand")
 
-local function assetfileCli()
+const function assetfileCli()
     Commandline.registerCommand(AssetfileCommand)
 
-    local ok, err = pcall(AssetfileCommand.Execute, AssetfileCommand, process.args)
+    const ok, err = pcall(AssetfileCommand.Execute, AssetfileCommand, process.args)
     if not ok then
         stdio.ewrite(`{err}\n`)
         process.exit(1)

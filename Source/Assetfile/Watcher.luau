@@ -9,33 +9,33 @@ hashing file contents on every poll.
 
 --]]
 
-local fs = require("@lune/fs")
+const fs = require("@lune/fs")
 
-local Chalk = require("@packages/Chalk")
-local t = require("@packages/t")
+const Chalk = require("@packages/Chalk")
+const t = require("@packages/t")
 
-local Config = require("@assetfile/Config")
-local FileUtils = require("@assetfile/FileUtils")
-local Sync = require("@assetfile/Sync")
+const Config = require("@assetfile/Config")
+const FileUtils = require("@assetfile/FileUtils")
+const Sync = require("@assetfile/Sync")
 
-local DEFAULT_POLL_INTERVAL = 2
+const DEFAULT_POLL_INTERVAL = 2
 
 type FileSnapshot = { [string]: number }
 
-local Watcher = {}
+const Watcher = {}
 
-local function takeSnapshot(assetsDir: string): FileSnapshot
-    local snapshot: FileSnapshot = {}
-    local files = FileUtils.scanDirectory(assetsDir)
+const function takeSnapshot(assetsDir: string): FileSnapshot
+    const snapshot: FileSnapshot = {}
+    const files = FileUtils.scanDirectory(assetsDir)
     for _, relativePath in files do
-        local fullPath = `{assetsDir}/{relativePath}`
-        local metadata = fs.metadata(fullPath)
+        const fullPath = `{assetsDir}/{relativePath}`
+        const metadata = fs.metadata(fullPath)
         snapshot[relativePath] = metadata.modifiedAt.unixTimestampMillis
     end
     return snapshot
 end
 
-local function hasChanges(previous: FileSnapshot, current: FileSnapshot): boolean
+const function hasChanges(previous: FileSnapshot, current: FileSnapshot): boolean
     for path, mtime in current do
         if not previous[path] or previous[path] ~= mtime then
             return true
@@ -55,10 +55,10 @@ function Watcher.watch(mappings: { Config.AssetMapping }, apiKeys: { [number]: s
     assert(t.table(mappings))
     assert(t.table(apiKeys))
 
-    local interval = pollInterval or DEFAULT_POLL_INTERVAL
+    const interval = pollInterval or DEFAULT_POLL_INTERVAL
 
     -- Build initial snapshot of file mtimes for each mapping
-    local snapshots: { [number]: FileSnapshot } = {}
+    const snapshots: { [number]: FileSnapshot } = {}
     for i, mapping in mappings do
         snapshots[i] = takeSnapshot(mapping.Assets)
     end
@@ -78,7 +78,7 @@ function Watcher.watch(mappings: { Config.AssetMapping }, apiKeys: { [number]: s
     -- Poll for changes using modification times
     while task.wait(interval) do
         for i, mapping in mappings do
-            local currentSnapshot = takeSnapshot(mapping.Assets)
+            const currentSnapshot = takeSnapshot(mapping.Assets)
 
             if hasChanges(snapshots[i], currentSnapshot) then
                 print(Chalk.dim(`Changes detected in "{mapping.Assets}", syncing...`))

@@ -8,15 +8,15 @@ to ROBLOX_API_KEY).
 
 --]]
 
-local process = require("@lune/process")
+const process = require("@lune/process")
 
-local Dotenv = require("@packages/Dotenv")
+const Dotenv = require("@packages/Dotenv")
 
-local function resolveApiKey(envName: string?): string
+const function resolveApiKey(envName: string?): string
     pcall(Dotenv.load)
 
-    local name = envName or "ROBLOX_API_KEY"
-    local apiKey = process.env[name]
+    const name = envName or "ROBLOX_API_KEY"
+    const apiKey = process.env[name]
 
     if apiKey and #apiKey > 0 then
         return apiKey

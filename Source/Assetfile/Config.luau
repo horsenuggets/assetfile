@@ -8,12 +8,12 @@ asset ID mappings.
 
 --]]
 
-local fs = require("@lune/fs")
-local serde = require("@lune/serde")
+const fs = require("@lune/fs")
+const serde = require("@lune/serde")
 
-local t = require("@packages/t")
+const t = require("@packages/t")
 
-local CONFIG_FILENAME = "assetfile.json"
+const CONFIG_FILENAME = "assetfile.json"
 
 export type AssetMapping = {
     ApiKeyEnvName: string?,
@@ -31,40 +31,40 @@ export type Config = {
     Mappings: { AssetMapping },
 }
 
-local validateCreator = t.interface({
+const validateCreator = t.interface({
     UserId = t.optional(t.string),
     GroupId = t.optional(t.string),
 })
 
-local validateMapping = t.interface({
+const validateMapping = t.interface({
     ApiKeyEnvName = t.optional(t.string),
     Assets = t.string,
     Output = t.string,
     Creator = validateCreator,
 })
 
-local validateConfig = t.interface({
+const validateConfig = t.interface({
     Mappings = t.array(validateMapping),
 })
 
-local Config = {}
+const Config = {}
 
 function Config.load(path: string?): Config
-    local configPath = path or CONFIG_FILENAME
+    const configPath = path or CONFIG_FILENAME
 
     assert(fs.isFile(configPath), `Config file "{configPath}" not found.`)
 
-    local content = fs.readFile(configPath)
-    local data = serde.decode("json", content)
+    const content = fs.readFile(configPath)
+    const data = serde.decode("json", content)
 
-    local ok, err = validateConfig(data)
+    const ok, err = validateConfig(data)
     assert(ok, `Invalid config file "{configPath}"\n{err}`)
 
     -- Validate that each Creator has exactly one of UserId or GroupId
     for i, mapping in data.Mappings do
-        local creator = mapping.Creator
-        local hasUserId = creator.UserId ~= nil
-        local hasGroupId = creator.GroupId ~= nil
+        const creator = mapping.Creator
+        const hasUserId = creator.UserId ~= nil
+        const hasGroupId = creator.GroupId ~= nil
         assert(hasUserId or hasGroupId, `Mapping {i} must have either "UserId" or "GroupId" in Creator.`)
         assert(
             not (hasUserId and hasGroupId),

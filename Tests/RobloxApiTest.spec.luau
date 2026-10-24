@@ -7,7 +7,7 @@ construction since actual API calls require a real API key.
 
 --]]
 
-local RobloxApi = require("@assetfile/RobloxApi")
+const RobloxApi = require("@assetfile/RobloxApi")
 
 return function()
     describe("RobloxApi", function()
@@ -60,7 +60,7 @@ return function()
 
         describe("new", function()
             it("should create an instance with a valid API key", function()
-                local api = RobloxApi.new("test-key-12345")
+                const api = RobloxApi.new("test-key-12345")
                 expect(api).to.be.ok()
             end)
 
