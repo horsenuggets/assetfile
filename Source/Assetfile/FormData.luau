@@ -8,7 +8,7 @@ delimiters.
 
 --]]
 
-local t = require("@packages/t")
+const t = require("@packages/t")
 
 type FormDataEntry = {
     Name: string,
@@ -24,7 +24,7 @@ export type FormData = {
     Append: (self: FormData, name: string, value: string, filename: string?, contentType: string?) -> (),
 }
 
-local MIME_TYPES = table.freeze({
+const MIME_TYPES = table.freeze({
     bmp = "image/bmp",
     fbx = "model/fbx",
     flac = "audio/flac",
@@ -44,11 +44,11 @@ local MIME_TYPES = table.freeze({
     webp = "image/webp",
 })
 
-local FormData = {}
+const FormData = {}
 FormData.__index = FormData
 
-local function generateBoundary(): string
-    local chars = {}
+const function generateBoundary(): string
+    const chars = {}
     for _ = 1, 32 do
         table.insert(chars, string.format("%x", math.random(0, 15)))
     end
@@ -56,7 +56,7 @@ local function generateBoundary(): string
 end
 
 function FormData.getMimeType(filename: string): string?
-    local extension = filename:match("%.(%w+)$")
+    const extension = filename:match("%.(%w+)$")
     if extension then
         return MIME_TYPES[extension:lower()]
     end
@@ -64,7 +64,7 @@ function FormData.getMimeType(filename: string): string?
 end
 
 function FormData.new(): FormData
-    local self = setmetatable({
+    const self = setmetatable({
         _entries = {} :: { FormDataEntry },
         Boundary = generateBoundary(),
     }, FormData)
@@ -89,8 +89,8 @@ function FormData.Append(self: FormData, name: string, value: string, filename: 
 end
 
 function FormData.GetBody(self: FormData): string
-    local entries = (self :: any)._entries :: { FormDataEntry }
-    local parts = {}
+    const entries = (self :: any)._entries :: { FormDataEntry }
+    const parts = {}
 
     for _, entry in entries do
         local header = `--{self.Boundary}\r\n`

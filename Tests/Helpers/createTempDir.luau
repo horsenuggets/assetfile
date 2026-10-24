@@ -8,15 +8,15 @@ parallel test execution without filesystem conflicts.
 
 --]]
 
-local fs = require("@lune/fs")
+const fs = require("@lune/fs")
 
 local counter = 0
 
-local function createTempDir(baseName: string): string
+const function createTempDir(baseName: string): string
     counter += 1
-    local baseDir = `.test-{baseName}`
-    local id = `{counter}-{math.random(100000, 999999)}`
-    local dir = `{baseDir}/{id}`
+    const baseDir = `.test-{baseName}`
+    const id = `{counter}-{math.random(100000, 999999)}`
+    const dir = `{baseDir}/{id}`
 
     if not fs.isDir(baseDir) then
         pcall(fs.writeDir, baseDir)

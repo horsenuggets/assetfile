@@ -2,31 +2,33 @@
 
 --[[
 
-BuildExecutable
+BuildExecutable.exec
 
 Compiles the assetfile CLI to a standalone executable. Embeds the VERSION
 at build time since compiled executables cannot read files at runtime.
 
 --]]
 
-local Chalk = require("@packages/Chalk")
-local Commandline = require("@packages/Commandline")
-local fs = require("@lune/fs")
-local process = require("@lune/process")
+const Chalk = require("@packages/Chalk")
+const Commandline = require("@packages/Commandline")
+const fs = require("@lune/fs")
+const process = require("@lune/process")
 
-local PROJECT_ROOT = tostring(script.Parent.Parent)
-local GENERATE_VERSION_SCRIPT = `{PROJECT_ROOT}/Scripts/GenerateVersion.luau`
-local OUTPUT_NAME = "assetfile"
+const PROJECT_ROOT = tostring(script.Parent.Parent)
+const GENERATE_VERSION_SCRIPT = `{PROJECT_ROOT}/Scripts/GenerateVersion.exec.luau`
+const OUTPUT_NAME = "assetfile"
 
-local function buildExecutable()
-    local target = process.args[1]
+const BuildExecutable = {}
+
+function BuildExecutable.exec()
+    const target = process.args[1]
 
     print()
     print(`Building {Chalk.bold(Chalk.blueBright(OUTPUT_NAME))} executable...`)
 
     -- Generate version module (run from project root so rokit shim
     -- finds manifest)
-    local versionResult = process.exec("lune", { "run", GENERATE_VERSION_SCRIPT }, { cwd = PROJECT_ROOT })
+    const versionResult = process.exec("lune", { "run", GENERATE_VERSION_SCRIPT }, { cwd = PROJECT_ROOT })
     if not versionResult.ok then
         print(Chalk.red("Failed to generate version module."))
         print(versionResult.stderr)
@@ -39,7 +41,7 @@ local function buildExecutable()
         Target = target,
     })
 
-    local outputPath = `{PROJECT_ROOT}/Build/{OUTPUT_NAME}`
+    const outputPath = `{PROJECT_ROOT}/Build/{OUTPUT_NAME}`
     local outputFile = outputPath
     if target and target:find("windows") then
         outputFile = `{outputPath}.exe`
@@ -55,4 +57,4 @@ local function buildExecutable()
     print(Chalk.bold(Chalk.greenBright("Build completed successfully!")))
 end
 
-buildExecutable()
+BuildExecutable.exec()

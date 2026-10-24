@@ -7,18 +7,18 @@ and polling for operation completion.
 
 --]]
 
-local net = require("@lune/net")
-local serde = require("@lune/serde")
+const net = require("@lune/net")
+const serde = require("@lune/serde")
 
-local t = require("@packages/t")
+const t = require("@packages/t")
 
-local FormData = require("@assetfile/FormData")
+const FormData = require("@assetfile/FormData")
 
-local API_BASE = "https://apis.roblox.com/assets/v1"
-local MAX_POLL_ATTEMPTS = 10
-local INITIAL_POLL_DELAY = 1
-local MAX_UPLOAD_RETRIES = 3
-local INITIAL_RETRY_DELAY = 2
+const API_BASE = "https://apis.roblox.com/assets/v1"
+const MAX_POLL_ATTEMPTS = 10
+const INITIAL_POLL_DELAY = 1
+const MAX_UPLOAD_RETRIES = 3
+const INITIAL_RETRY_DELAY = 2
 
 export type AssetType = "Audio" | "Image" | "Model"
 
@@ -47,7 +47,7 @@ export type RobloxApi = {
     _pollOperation: (self: RobloxApi, operationId: string) -> UploadResult,
 }
 
-local ASSET_TYPE_MAP: { [string]: AssetType } = {
+const ASSET_TYPE_MAP: { [string]: AssetType } = {
     bmp = "Image",
     fbx = "Model",
     flac = "Audio",
@@ -66,11 +66,11 @@ local ASSET_TYPE_MAP: { [string]: AssetType } = {
     webp = "Image",
 }
 
-local RobloxApi = {}
+const RobloxApi = {}
 RobloxApi.__index = RobloxApi
 
 function RobloxApi.getAssetType(filename: string): AssetType?
-    local extension = filename:match("%.(%w+)$")
+    const extension = filename:match("%.(%w+)$")
     if extension then
         return ASSET_TYPE_MAP[extension:lower()]
     end
@@ -81,7 +81,7 @@ function RobloxApi.new(apiKey: string): RobloxApi
     assert(t.string(apiKey))
     assert(#apiKey > 0, "API key must not be empty.")
 
-    local self = setmetatable({
+    const self = setmetatable({
         _apiKey = apiKey,
     }, RobloxApi)
 
@@ -94,7 +94,7 @@ function RobloxApi._pollOperation(self: RobloxApi, operationId: string): UploadR
     for attempt = 1, MAX_POLL_ATTEMPTS do
         task.wait(delay)
 
-        local ok, response = pcall(net.request, {
+        const ok, response = pcall(net.request, {
             url = `{API_BASE}/operations/{operationId}`,
             method = "GET",
             headers = {
@@ -113,7 +113,7 @@ function RobloxApi._pollOperation(self: RobloxApi, operationId: string): UploadR
 
         if response.statusCode == 429 then
             -- Rate limited, back off and retry
-            local retryAfter = tonumber(response.headers["retry-after"]) or delay * 2
+            const retryAfter = tonumber(response.headers["retry-after"]) or delay * 2
             task.wait(retryAfter)
             continue
         end
@@ -122,7 +122,7 @@ function RobloxApi._pollOperation(self: RobloxApi, operationId: string): UploadR
             error(`Failed to poll operation "{operationId}" (HTTP {response.statusCode}).`)
         end
 
-        local body = serde.decode("json", response.body)
+        const body = serde.decode("json", response.body)
 
         if body.done then
             return {
@@ -146,14 +146,14 @@ function RobloxApi.Upload(self: RobloxApi, request: UploadRequest): UploadResult
     assert(t.string(request.FileContent))
     assert(t.string(request.Filename))
 
-    local creatorContext: { [string]: any } = { creator = {} }
+    const creatorContext: { [string]: any } = { creator = {} }
     if request.Creator.UserId then
         creatorContext.creator.userId = request.Creator.UserId
     else
         creatorContext.creator.groupId = request.Creator.GroupId
     end
 
-    local metadata = serde.encode("json", {
+    const metadata = serde.encode("json", {
         assetType = request.AssetType,
         displayName = request.DisplayName,
         description = request.Description,
@@ -163,11 +163,11 @@ function RobloxApi.Upload(self: RobloxApi, request: UploadRequest): UploadResult
     local retryDelay = INITIAL_RETRY_DELAY
 
     for attempt = 1, MAX_UPLOAD_RETRIES do
-        local form = FormData.new()
+        const form = FormData.new()
         form:Append("request", metadata, nil, "application/json")
         form:Append("fileContent", request.FileContent, request.Filename, FormData.getMimeType(request.Filename))
 
-        local ok, response = pcall(net.request, {
+        const ok, response = pcall(net.request, {
             url = `{API_BASE}/assets`,
             method = "POST",
             headers = {
@@ -190,7 +190,7 @@ function RobloxApi.Upload(self: RobloxApi, request: UploadRequest): UploadResult
         if response.statusCode == 429 then
             -- Rate limited
             if attempt < MAX_UPLOAD_RETRIES then
-                local retryAfter = tonumber(response.headers["retry-after"]) or retryDelay
+                const retryAfter = tonumber(response.headers["retry-after"]) or retryDelay
                 task.wait(retryAfter)
                 retryDelay *= 2
                 continue
@@ -211,8 +211,8 @@ function RobloxApi.Upload(self: RobloxApi, request: UploadRequest): UploadResult
             error(`Failed to upload asset "{request.DisplayName}"` .. ` (HTTP {response.statusCode}): {response.body}`)
         end
 
-        local body = serde.decode("json", response.body)
-        local operationId = body.path and body.path:match("operations/(.+)") or body.operationId
+        const body = serde.decode("json", response.body)
+        const operationId = body.path and body.path:match("operations/(.+)") or body.operationId
 
         if not operationId then
             error(`Upload response did not contain an operation ID.`)

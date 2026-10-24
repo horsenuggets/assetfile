@@ -7,17 +7,17 @@ asset map, uploads new or changed assets, and removes stale entries.
 
 --]]
 
-local fs = require("@lune/fs")
+const fs = require("@lune/fs")
 
-local Chalk = require("@packages/Chalk")
-local t = require("@packages/t")
+const Chalk = require("@packages/Chalk")
+const t = require("@packages/t")
 
-local AssetMap = require("@assetfile/AssetMap")
-local Config = require("@assetfile/Config")
-local FileUtils = require("@assetfile/FileUtils")
-local RobloxApi = require("@assetfile/RobloxApi")
+const AssetMap = require("@assetfile/AssetMap")
+const Config = require("@assetfile/Config")
+const FileUtils = require("@assetfile/FileUtils")
+const RobloxApi = require("@assetfile/RobloxApi")
 
-local MAX_CONCURRENT_UPLOADS = 5
+const MAX_CONCURRENT_UPLOADS = 5
 
 export type SyncResult = {
     Uploaded: number,
@@ -27,20 +27,20 @@ export type SyncResult = {
     Errors: { string },
 }
 
-local Sync = {}
+const Sync = {}
 
 function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
     assert(t.string(apiKey))
 
-    local assetsDir = mapping.Assets
-    local outputPath = mapping.Output
+    const assetsDir = mapping.Assets
+    const outputPath = mapping.Output
 
     assert(fs.isDir(assetsDir), `Assets directory "{assetsDir}" does not exist.`)
 
-    local api = RobloxApi.new(apiKey)
-    local assetMap = AssetMap.new(assetsDir)
+    const api = RobloxApi.new(apiKey)
+    const assetMap = AssetMap.new(assetsDir)
 
-    local result: SyncResult = {
+    const result: SyncResult = {
         Uploaded = 0,
         Updated = 0,
         Removed = 0,
@@ -49,14 +49,14 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
     }
 
     -- Scan the directory for all supported asset files
-    local currentFiles = FileUtils.scanDirectory(assetsDir)
-    local currentFileSet: { [string]: boolean } = {}
+    const currentFiles = FileUtils.scanDirectory(assetsDir)
+    const currentFileSet: { [string]: boolean } = {}
     for _, relativePath in currentFiles do
         currentFileSet[relativePath] = true
     end
 
     -- Remove stale entries (files that no longer exist)
-    local existingEntries = assetMap:GetAll()
+    const existingEntries = assetMap:GetAll()
     for relativePath in existingEntries do
         if not currentFileSet[relativePath] then
             assetMap:Remove(relativePath)
@@ -73,11 +73,11 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
         IsUpdate: boolean,
     }
 
-    local jobs: { UploadJob } = {}
+    const jobs: { UploadJob } = {}
     for _, relativePath in currentFiles do
-        local fullPath = `{assetsDir}/{relativePath}`
-        local hash = FileUtils.hashFile(fullPath)
-        local existing = assetMap:Get(relativePath)
+        const fullPath = `{assetsDir}/{relativePath}`
+        const hash = FileUtils.hashFile(fullPath)
+        const existing = assetMap:Get(relativePath)
 
         if existing and existing.Hash == hash then
             continue
@@ -101,7 +101,7 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
         ErrorMessage: string?,
     }
 
-    local jobResults: { JobResult? } = table.create(#jobs)
+    const jobResults: { JobResult? } = table.create(#jobs)
     local remaining = #jobs
 
     if remaining > 0 then
@@ -116,12 +116,12 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
 
             activeCount += 1
             task.spawn(function()
-                local displayName = job.RelativePath:match("([^/]+)%..+$") or job.RelativePath
-                local fileContent = fs.readFile(job.FullPath)
-                local assetType = RobloxApi.getAssetType(job.RelativePath)
+                const displayName = job.RelativePath:match("([^/]+)%..+$") or job.RelativePath
+                const fileContent = fs.readFile(job.FullPath)
+                const assetType = RobloxApi.getAssetType(job.RelativePath)
                 assert(assetType, `Could not determine asset type for "{job.RelativePath}".`)
 
-                local ok, uploadResult = pcall(function()
+                const ok, uploadResult = pcall(function()
                     return api:Upload({
                         AssetType = assetType,
                         DisplayName = displayName,
@@ -176,7 +176,7 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
             end
         else
             result.Failed += 1
-            local errorMsg = `Failed to sync "{jobResult.RelativePath}": {jobResult.ErrorMessage}`
+            const errorMsg = `Failed to sync "{jobResult.RelativePath}": {jobResult.ErrorMessage}`
             table.insert(result.Errors, errorMsg)
             print(`{Chalk.red("Failed")} "{jobResult.RelativePath}": {jobResult.ErrorMessage}`)
         end

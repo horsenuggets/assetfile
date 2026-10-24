@@ -7,13 +7,13 @@ configuration loading, asset uploading, and file watching.
 
 --]]
 
-local AssetMap = require("@self/AssetMap")
-local Config = require("@self/Config")
-local FileUtils = require("@self/FileUtils")
-local FormData = require("@self/FormData")
-local RobloxApi = require("@self/RobloxApi")
-local Sync = require("@self/Sync")
-local Watcher = require("@self/Watcher")
+const AssetMap = require("@self/AssetMap")
+const Config = require("@self/Config")
+const FileUtils = require("@self/FileUtils")
+const FormData = require("@self/FormData")
+const RobloxApi = require("@self/RobloxApi")
+const Sync = require("@self/Sync")
+const Watcher = require("@self/Watcher")
 
 return {
     AssetMap = AssetMap,
