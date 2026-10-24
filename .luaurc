@@ -3,7 +3,7 @@
         "assetfile": "./Source/Assetfile/",
         "assetfilecli": "./Source/AssetfileCli/",
         "devpackages": "./DevPackages/",
-        "lune": "~/.lune/.typedefs/0.10.4-horse.14.5/",
+        "lune": "~/.lune/.typedefs/0.11.1-horse.16.1/",
         "packages": "./Packages/",
         "tests": "./Tests/"
     },
