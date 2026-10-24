@@ -1,6 +1,6 @@
 [tools]
 luau-lsp = "horsenuggets/luau-lsp@1.70.1-horse.1.6"
 lune = "horsenuggets/lune@0.11.1-horse.16.1"
-rojo = "horsenuggets/rojo@7.7.0-rc.1-horse.0.7"
+rojo = "horsenuggets/rojo@7.7.0-rc.1-horse.0.8"
 stylua = "johnnymorganz/stylua@2.6.0"
 wally = "horsenuggets/wally@0.3.2-horse.5.1"
