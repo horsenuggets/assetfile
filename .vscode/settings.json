@@ -21,9 +21,7 @@
     "luau-lsp.sourcemap.enabled": true,
     "luau-lsp.sourcemap.rojoProjectFile": "dev.project.json",
     "luau-lsp.sourcemap.sourcemapFile": "sourcemap.json",
-    "markdown.styles": [
-        ".local/styles/lexend.css"
-    ],
+    "markdown.styles": [".local/styles/lexend.css"],
     "search.exclude": {
         "**/Submodules/**": true
     },
