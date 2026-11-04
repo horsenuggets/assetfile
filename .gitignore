@@ -16,7 +16,9 @@
 .env
 .local
 .mcp.json
-.vscode
+/.vscode/*
+!/.vscode/extensions.json
+!/.vscode/settings.json
 
 # Generated files
 *.bak
