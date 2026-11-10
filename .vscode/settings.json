@@ -7,6 +7,58 @@
         "editor.defaultFormatter": "JohnnyMorganz.stylua",
         "editor.formatOnSave": true
     },
+    "[terraform]": {
+        "editor.defaultFormatter": "jkillian.custom-local-formatters",
+        "editor.detectIndentation": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "[terraform-mock]": {
+        "editor.defaultFormatter": "jkillian.custom-local-formatters",
+        "editor.detectIndentation": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "[terraform-search]": {
+        "editor.defaultFormatter": "jkillian.custom-local-formatters",
+        "editor.detectIndentation": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "[terraform-test]": {
+        "editor.defaultFormatter": "jkillian.custom-local-formatters",
+        "editor.detectIndentation": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "[terraform-vars]": {
+        "editor.defaultFormatter": "jkillian.custom-local-formatters",
+        "editor.detectIndentation": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "customLocalFormatters.formatters": [
+        {
+            "command": "go -C Submodules/tf4fmt run ./src/cmd/tf4fmt -",
+            "languages": [
+                "terraform",
+                "terraform-mock",
+                "terraform-search",
+                "terraform-test",
+                "terraform-vars"
+            ]
+        }
+    ],
     "luau-lsp.completion.autocompleteEnd": true,
     "luau-lsp.completion.enableFragmentAutocomplete": true,
     "luau-lsp.completion.fillCallArguments": false,
