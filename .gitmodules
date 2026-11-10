@@ -10,3 +10,6 @@
 [submodule "Submodules/luau-cicd"]
 	path = Submodules/luau-cicd
 	url = git@github.com:horsenuggets/luau-cicd.git
+[submodule "Submodules/tf4fmt"]
+	path = Submodules/tf4fmt
+	url = git@github.com:horsenuggets/tf4fmt.git
