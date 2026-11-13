@@ -3,7 +3,7 @@ terraform {
 
     required_providers {
         github = {
-            source  = "integrations/github"
+            source = "integrations/github"
             version = "~> 6.0"
         }
     }
@@ -14,7 +14,7 @@ provider "github" {
 }
 
 module "repo" {
-    source     = "../Submodules/luau-cicd/Terraform/Modules/CommandlineCli"
+    source = "../Submodules/luau-cicd/Terraform/Modules/CommandlineCli"
     repository = "assetfile"
 
     extra_release_checks = [
@@ -23,6 +23,6 @@ module "repo" {
         "Build test macos-x86_64",
         "Build test macos-aarch64",
         "Build test windows-x86_64",
-        "Build test windows-aarch64",
+        "Build test windows-aarch64"
     ]
 }
