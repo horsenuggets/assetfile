@@ -23,6 +23,6 @@ module "repo" {
         "Build test macos-x86_64",
         "Build test macos-aarch64",
         "Build test windows-x86_64",
-        "Build test windows-aarch64",
+        "Build test windows-aarch64"
     ]
 }

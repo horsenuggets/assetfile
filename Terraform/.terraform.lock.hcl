@@ -18,7 +18,7 @@ provider "registry.terraform.io/hashicorp/external" {
         "zh:d1f3c497aa41f17e8d61067122f6d94e51ef942ab08be5465489864d900854ab",
         "zh:e62568bfc0934b63e14f3547c823b01ed60d7475ff16bf12c0e55d5ac8d98ba7",
         "zh:ed8890c29dba2b0ac27afcefa75e7395e27253b7025aaaa4258345fc59dad23e",
-        "zh:f220c56c7e487f01fd158126066f6525178bbd82805b27205354bc523cc7c413",
+        "zh:f220c56c7e487f01fd158126066f6525178bbd82805b27205354bc523cc7c413"
     ]
 }
 
@@ -41,6 +41,6 @@ provider "registry.terraform.io/integrations/github" {
         "zh:f2c99825f38c92ac599ad36b9d093ea0c0d790fd0c02e861789e14735a605f86",
         "zh:f33b5abe14ad5fb9978da5dbd3bc6989f69766150d4b30ed283a2c281871eda3",
         "zh:f6c2fe9dd958c554170dc0c35ca41b60fcc6253304cde0b9941c5c872b18ac54",
-        "zh:fbd1fee2c9df3aa19cf8851ce134dea6e45ea01cb85695c1726670c285797e25",
+        "zh:fbd1fee2c9df3aa19cf8851ce134dea6e45ea01cb85695c1726670c285797e25"
     ]
 }
