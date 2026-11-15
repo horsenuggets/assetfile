@@ -1,4 +1,4 @@
-name: Publish release
+name: Release / CD
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - release
 
 jobs:
-  build:
-    name: Build CLI ${{ matrix.target }}
+  build-cli:
+    name: build-cli-${{ matrix.target }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -48,10 +48,10 @@ jobs:
           name: assetfile-${{ matrix.target }}
           path: Build/assetfile-${{ matrix.target }}*
 
-  release:
-    name: Create release
+  create-release:
+    name: create-release
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [build-cli]
     permissions:
       contents: write
 
