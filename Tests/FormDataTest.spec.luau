@@ -8,6 +8,9 @@ Tests for the FormData multipart form-data builder.
 
 const FormData = require("@assetfile/FormData")
 
+const Testable = require("@devpackages/Testable")
+const describe, expect, it = Testable.describe, Testable.expect, Testable.it
+
 return function()
     describe("FormData", function()
         describe("getMimeType", function()

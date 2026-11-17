@@ -9,6 +9,9 @@ construction since actual API calls require a real API key.
 
 const RobloxApi = require("@assetfile/RobloxApi")
 
+const Testable = require("@devpackages/Testable")
+const describe, expect, it = Testable.describe, Testable.expect, Testable.it
+
 return function()
     describe("RobloxApi", function()
         describe("getAssetType", function()

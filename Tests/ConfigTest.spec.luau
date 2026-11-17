@@ -11,6 +11,9 @@ const serde = require("@lune/serde")
 
 const Config = require("@assetfile/Config")
 
+const Testable = require("@devpackages/Testable")
+const afterAll, describe, expect, it = Testable.afterAll, Testable.describe, Testable.expect, Testable.it
+
 const createTempDir = require("./Helpers/createTempDir")
 const removeDirectory = require("./Helpers/removeDirectory")
 
