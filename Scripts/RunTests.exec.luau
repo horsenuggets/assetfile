@@ -47,7 +47,7 @@ function RunTests.exec()
         end
     end
 
-    Testable.configure({ Parallel = false })
+    Testable.configure({ InjectGlobals = false, Parallel = false })
     const _, passed = Testable.run(testsToRun)
     process.exit(if passed then 0 else 1)
 end

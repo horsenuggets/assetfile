@@ -12,6 +12,10 @@ const fs = require("@lune/fs")
 const process = require("@lune/process")
 const serde = require("@lune/serde")
 
+const Testable = require("@devpackages/Testable")
+const afterAll, beforeAll, describe, expect, it =
+    Testable.afterAll, Testable.beforeAll, Testable.describe, Testable.expect, Testable.it
+
 const createTempDir = require("./Helpers/createTempDir")
 const removeDirectory = require("./Helpers/removeDirectory")
 
