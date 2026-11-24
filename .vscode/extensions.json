@@ -2,8 +2,8 @@
     "recommendations": [
         "hashicorp.hcl",
         "hashicorp.terraform",
+        "horsenuggets.styluau",
         "jkillian.custom-local-formatters",
-        "JohnnyMorganz.luau-lsp",
-        "JohnnyMorganz.stylua"
+        "JohnnyMorganz.luau-lsp"
     ]
 }

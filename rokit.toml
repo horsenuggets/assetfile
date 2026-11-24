@@ -2,5 +2,5 @@
 luau-lsp = "horsenuggets/luau-lsp@1.70.1-horse.2.0"
 lune = "horsenuggets/lune@0.11.1-horse.16.6"
 rojo = "horsenuggets/rojo@7.7.1-horse.2.10"
-stylua = "johnnymorganz/stylua@2.6.0"
+styluau = "horsenuggets/styluau@2.6.0-horse.1.0"
 wally = "horsenuggets/wally@0.3.2-horse.6.2"
