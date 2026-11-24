@@ -52,9 +52,9 @@ return function()
                         {
                             Assets = "assets",
                             Output = "Assets.luau",
-                            Creator = { UserId = "12345" },
-                        },
-                    },
+                            Creator = { UserId = "12345" }
+                        }
+                    }
                 })
 
                 const config = Config.load(path)
@@ -71,9 +71,9 @@ return function()
                         {
                             Assets = "assets",
                             Output = "Assets.luau",
-                            Creator = { GroupId = "67890" },
-                        },
-                    },
+                            Creator = { GroupId = "67890" }
+                        }
+                    }
                 })
 
                 const config = Config.load(path)
@@ -88,9 +88,9 @@ return function()
                             ApiKeyEnvName = "MY_CUSTOM_KEY",
                             Assets = "assets",
                             Output = "Assets.luau",
-                            Creator = { UserId = "12345" },
-                        },
-                    },
+                            Creator = { UserId = "12345" }
+                        }
+                    }
                 })
 
                 const config = Config.load(path)
@@ -104,14 +104,14 @@ return function()
                         {
                             Assets = "images",
                             Output = "Images.luau",
-                            Creator = { UserId = "12345" },
+                            Creator = { UserId = "12345" }
                         },
                         {
                             Assets = "sounds",
                             Output = "Sounds.luau",
-                            Creator = { GroupId = "67890" },
-                        },
-                    },
+                            Creator = { GroupId = "67890" }
+                        }
+                    }
                 })
 
                 const config = Config.load(path)
@@ -132,9 +132,9 @@ return function()
                         {
                             Assets = "assets",
                             Output = "Assets.luau",
-                            Creator = { UserId = "12345", GroupId = "67890" },
-                        },
-                    },
+                            Creator = { UserId = "12345", GroupId = "67890" }
+                        }
+                    }
                 })
 
                 expect(function()
@@ -149,9 +149,9 @@ return function()
                         {
                             Assets = "assets",
                             Output = "Assets.luau",
-                            Creator = {},
-                        },
-                    },
+                            Creator = {}
+                        }
+                    }
                 })
 
                 expect(function()

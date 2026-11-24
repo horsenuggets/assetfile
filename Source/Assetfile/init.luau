@@ -22,5 +22,5 @@ return {
     FormData = FormData,
     RobloxApi = RobloxApi,
     Sync = Sync,
-    Watcher = Watcher,
+    Watcher = Watcher
 }

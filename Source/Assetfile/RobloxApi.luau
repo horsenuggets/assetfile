@@ -24,7 +24,7 @@ export type AssetType = "Audio" | "Image" | "Model"
 
 export type CreatorInfo = {
     UserId: string?,
-    GroupId: string?,
+    GroupId: string?
 }
 
 export type UploadRequest = {
@@ -33,18 +33,18 @@ export type UploadRequest = {
     Description: string,
     Creator: CreatorInfo,
     FileContent: string,
-    Filename: string,
+    Filename: string
 }
 
 export type UploadResult = {
     AssetId: string,
     DisplayName: string,
-    ModerationState: string,
+    ModerationState: string
 }
 
 export type RobloxApi = {
     Upload: (self: RobloxApi, request: UploadRequest) -> UploadResult,
-    _pollOperation: (self: RobloxApi, operationId: string) -> UploadResult,
+    _pollOperation: (self: RobloxApi, operationId: string) -> UploadResult
 }
 
 const ASSET_TYPE_MAP: { [string]: AssetType } = {
@@ -63,7 +63,7 @@ const ASSET_TYPE_MAP: { [string]: AssetType } = {
     rbxmx = "Model",
     tga = "Image",
     wav = "Audio",
-    webp = "Image",
+    webp = "Image"
 }
 
 const RobloxApi = {}
@@ -82,7 +82,7 @@ function RobloxApi.new(apiKey: string): RobloxApi
     assert(#apiKey > 0, "API key must not be empty.")
 
     const self = setmetatable({
-        _apiKey = apiKey,
+        _apiKey = apiKey
     }, RobloxApi)
 
     return self
@@ -98,8 +98,8 @@ function RobloxApi._pollOperation(self: RobloxApi, operationId: string): UploadR
             url = `{API_BASE}/operations/{operationId}`,
             method = "GET",
             headers = {
-                ["x-api-key"] = (self :: any)._apiKey,
-            },
+                ["x-api-key"] = (self :: any)._apiKey
+            }
         })
 
         if not ok then
@@ -129,7 +129,7 @@ function RobloxApi._pollOperation(self: RobloxApi, operationId: string): UploadR
                 AssetId = body.response.assetId,
                 DisplayName = body.response.displayName,
                 ModerationState = body.response.moderationResult and body.response.moderationResult.moderationState
-                    or "UNKNOWN",
+                    or "UNKNOWN"
             }
         end
 
@@ -157,7 +157,7 @@ function RobloxApi.Upload(self: RobloxApi, request: UploadRequest): UploadResult
         assetType = request.AssetType,
         displayName = request.DisplayName,
         description = request.Description,
-        creationContext = creatorContext,
+        creationContext = creatorContext
     })
 
     local retryDelay = INITIAL_RETRY_DELAY
@@ -172,9 +172,9 @@ function RobloxApi.Upload(self: RobloxApi, request: UploadRequest): UploadResult
             method = "POST",
             headers = {
                 ["x-api-key"] = (self :: any)._apiKey,
-                ["Content-Type"] = form:GetContentType(),
+                ["Content-Type"] = form:GetContentType()
             },
-            body = form:GetBody(),
+            body = form:GetBody()
         })
 
         if not ok then

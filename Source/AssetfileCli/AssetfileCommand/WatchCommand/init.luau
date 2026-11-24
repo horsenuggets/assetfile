@@ -23,8 +23,8 @@ return Commandline.Command.new({
             Description = "Poll interval in seconds.",
             Shorthand = "i",
             Type = "number",
-            Default = 2,
-        }),
+            Default = 2
+        })
     },
     Impl = function(_args: any, flags: any)
         assert(Config.exists(), "No assetfile.json found in current directory.")
@@ -37,5 +37,5 @@ return Commandline.Command.new({
         end
 
         Watcher.watch(config.Mappings, apiKeys, flags.interval.Value)
-    end,
+    end
 })

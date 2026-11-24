@@ -19,32 +19,32 @@ export type AssetMapping = {
     ApiKeyEnvName: string?,
     Assets: string,
     Output: string,
-    Creator: CreatorConfig,
+    Creator: CreatorConfig
 }
 
 export type CreatorConfig = {
     UserId: string?,
-    GroupId: string?,
+    GroupId: string?
 }
 
 export type Config = {
-    Mappings: { AssetMapping },
+    Mappings: { AssetMapping }
 }
 
 const validateCreator = t.interface({
     UserId = t.optional(t.string),
-    GroupId = t.optional(t.string),
+    GroupId = t.optional(t.string)
 })
 
 const validateMapping = t.interface({
     ApiKeyEnvName = t.optional(t.string),
     Assets = t.string,
     Output = t.string,
-    Creator = validateCreator,
+    Creator = validateCreator
 })
 
 const validateConfig = t.interface({
-    Mappings = t.array(validateMapping),
+    Mappings = t.array(validateMapping)
 })
 
 const Config = {}

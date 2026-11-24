@@ -38,7 +38,7 @@ return function()
             it("should error when no input is provided", function()
                 const dir = createTempDir(BASE_NAME)
                 const result = process.exec(BINARY_PATH, { "init" }, {
-                    cwd = dir,
+                    cwd = dir
                 })
                 -- init requires interactive stdio prompts, so it should
                 -- fail in non-interactive mode
@@ -56,9 +56,9 @@ return function()
                     "--output",
                     "Images.luau",
                     "--api-key-env",
-                    "MY_KEY",
+                    "MY_KEY"
                 }, {
-                    cwd = dir,
+                    cwd = dir
                 })
                 expect(result.ok).to.equal(true)
 
@@ -78,9 +78,9 @@ return function()
                     "--assets",
                     "sounds",
                     "--output",
-                    "Sounds.luau",
+                    "Sounds.luau"
                 }, {
-                    cwd = dir,
+                    cwd = dir
                 })
                 expect(result.ok).to.equal(true)
 
@@ -96,9 +96,9 @@ return function()
                     "--user-id",
                     "12345",
                     "--api-key-env",
-                    "ROBLOX_API_KEY",
+                    "ROBLOX_API_KEY"
                 }, {
-                    cwd = dir,
+                    cwd = dir
                 })
                 expect(result.ok).to.equal(true)
 
@@ -111,9 +111,9 @@ return function()
                 const result = process.exec(BINARY_PATH, {
                     "init",
                     "--user-id",
-                    "12345",
+                    "12345"
                 }, {
-                    cwd = dir,
+                    cwd = dir
                 })
                 expect(result.ok).to.equal(true)
 
@@ -127,12 +127,12 @@ return function()
                 fs.writeFile(
                     `{dir}/assetfile.json`,
                     serde.encode("json", {
-                        Mappings = {},
+                        Mappings = {}
                     })
                 )
 
                 const result = process.exec(BINARY_PATH, { "init" }, {
-                    cwd = dir,
+                    cwd = dir
                 })
                 expect(result.ok).to.equal(true)
                 expect(result.stdout:find("already exists")).to.be.ok()
@@ -143,7 +143,7 @@ return function()
             it("should error when no config exists", function()
                 const dir = createTempDir(BASE_NAME)
                 const result = process.exec(BINARY_PATH, { "sync" }, {
-                    cwd = dir,
+                    cwd = dir
                 })
                 expect(result.ok).to.equal(false)
                 expect(result.stderr:find("assetfile.json")).to.be.ok()

@@ -23,7 +23,7 @@ const GenerateVersion = {}
 function GenerateVersion.exec()
     Commandline.Toolkit.generateVersion({
         OutputPath = VERSION_MODULE,
-        VersionFile = VERSION_FILE,
+        VersionFile = VERSION_FILE
     })
 end
 

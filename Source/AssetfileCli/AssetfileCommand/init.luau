@@ -21,6 +21,6 @@ return Commandline.Command.new({
     Subcommands = {
         InitCommand,
         SyncCommand,
-        WatchCommand,
-    },
+        WatchCommand
+    }
 })

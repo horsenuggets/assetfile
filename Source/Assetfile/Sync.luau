@@ -24,7 +24,7 @@ export type SyncResult = {
     Updated: number,
     Removed: number,
     Failed: number,
-    Errors: { string },
+    Errors: { string }
 }
 
 const Sync = {}
@@ -45,7 +45,7 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
         Updated = 0,
         Removed = 0,
         Failed = 0,
-        Errors = {},
+        Errors = {}
     }
 
     -- Scan the directory for all supported asset files
@@ -70,7 +70,7 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
         RelativePath: string,
         FullPath: string,
         Hash: string,
-        IsUpdate: boolean,
+        IsUpdate: boolean
     }
 
     const jobs: { UploadJob } = {}
@@ -87,7 +87,7 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
             RelativePath = relativePath,
             FullPath = fullPath,
             Hash = hash,
-            IsUpdate = existing ~= nil,
+            IsUpdate = existing ~= nil
         })
     end
 
@@ -98,7 +98,7 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
         Hash: string,
         IsUpdate: boolean,
         AssetId: string?,
-        ErrorMessage: string?,
+        ErrorMessage: string?
     }
 
     const jobResults: { JobResult? } = table.create(#jobs)
@@ -128,7 +128,7 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
                         Description = "Uploaded by Assetfile.",
                         Creator = mapping.Creator,
                         FileContent = fileContent,
-                        Filename = job.RelativePath,
+                        Filename = job.RelativePath
                     })
                 end)
 
@@ -138,7 +138,7 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
                         RelativePath = job.RelativePath,
                         Hash = job.Hash,
                         IsUpdate = job.IsUpdate,
-                        AssetId = uploadResult.AssetId,
+                        AssetId = uploadResult.AssetId
                     }
                 else
                     jobResults[i] = {
@@ -146,7 +146,7 @@ function Sync.run(mapping: Config.AssetMapping, apiKey: string): SyncResult
                         RelativePath = job.RelativePath,
                         Hash = job.Hash,
                         IsUpdate = job.IsUpdate,
-                        ErrorMessage = tostring(uploadResult),
+                        ErrorMessage = tostring(uploadResult)
                     }
                 end
 
