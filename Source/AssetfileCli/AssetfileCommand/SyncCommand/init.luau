@@ -47,5 +47,5 @@ return Commandline.Command.new({
         if totalFailed > 0 then
             process.exit(1)
         end
-    end,
+    end
 })

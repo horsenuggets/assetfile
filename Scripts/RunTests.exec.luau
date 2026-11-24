@@ -20,7 +20,7 @@ const TESTS = {
     { Name = "ConfigTest", Func = require("../Tests/ConfigTest.spec") },
     { Name = "FileUtilsTest", Func = require("../Tests/FileUtilsTest.spec") },
     { Name = "FormDataTest", Func = require("../Tests/FormDataTest.spec") },
-    { Name = "RobloxApiTest", Func = require("../Tests/RobloxApiTest.spec") },
+    { Name = "RobloxApiTest", Func = require("../Tests/RobloxApiTest.spec") }
 }
 
 const RunTests = {}

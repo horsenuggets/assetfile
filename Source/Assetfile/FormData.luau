@@ -14,14 +14,14 @@ type FormDataEntry = {
     Name: string,
     Value: string,
     Filename: string?,
-    ContentType: string,
+    ContentType: string
 }
 
 export type FormData = {
     Boundary: string,
     GetBody: (self: FormData) -> string,
     GetContentType: (self: FormData) -> string,
-    Append: (self: FormData, name: string, value: string, filename: string?, contentType: string?) -> (),
+    Append: (self: FormData, name: string, value: string, filename: string?, contentType: string?) -> ()
 }
 
 const MIME_TYPES = table.freeze({
@@ -41,7 +41,7 @@ const MIME_TYPES = table.freeze({
     rbxmx = "model/x-rbxmx",
     tga = "image/tga",
     wav = "audio/wav",
-    webp = "image/webp",
+    webp = "image/webp"
 })
 
 const FormData = {}
@@ -66,7 +66,7 @@ end
 function FormData.new(): FormData
     const self = setmetatable({
         _entries = {} :: { FormDataEntry },
-        Boundary = generateBoundary(),
+        Boundary = generateBoundary()
     }, FormData)
     return self
 end
@@ -84,7 +84,7 @@ function FormData.Append(self: FormData, name: string, value: string, filename: 
         Name = name,
         Value = value,
         Filename = filename,
-        ContentType = resolvedContentType or "application/octet-stream",
+        ContentType = resolvedContentType or "application/octet-stream"
     })
 end
 

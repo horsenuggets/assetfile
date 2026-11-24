@@ -21,7 +21,7 @@ function RunCli.exec()
     end
 
     process.exec("lune", args, {
-        stdio = "forward",
+        stdio = "forward"
     })
 end
 

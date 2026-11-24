@@ -23,32 +23,32 @@ return Commandline.Command.new({
             Name = "api-key-env",
             Description = "Environment variable name for the API key.",
             Shorthand = "k",
-            Type = "string",
+            Type = "string"
         }),
         Commandline.Flag.new({
             Name = "assets",
             Description = "Assets directory path.",
             Shorthand = "a",
-            Type = "string",
+            Type = "string"
         }),
         Commandline.Flag.new({
             Name = "group-id",
             Description = "Roblox group ID for the creator.",
             Shorthand = "g",
-            Type = "string",
+            Type = "string"
         }),
         Commandline.Flag.new({
             Name = "output",
             Description = "Output Luau file path.",
             Shorthand = "o",
-            Type = "string",
+            Type = "string"
         }),
         Commandline.Flag.new({
             Name = "user-id",
             Description = "Roblox user ID for the creator.",
             Shorthand = "u",
-            Type = "string",
-        }),
+            Type = "string"
+        })
     },
     Impl = function(_args: any, flags: any)
         if Config.exists() then
@@ -113,7 +113,7 @@ return Commandline.Command.new({
         const mapping: { [string]: any } = {
             Assets = assetsDir,
             Creator = creator,
-            Output = outputPath,
+            Output = outputPath
         }
 
         if apiKeyEnvName and apiKeyEnvName ~= "ROBLOX_API_KEY" then
@@ -121,7 +121,7 @@ return Commandline.Command.new({
         end
 
         const config = {
-            Mappings = { mapping },
+            Mappings = { mapping }
         }
 
         fs.writeFile("assetfile.json", serde.encode("json", config))
@@ -131,5 +131,5 @@ return Commandline.Command.new({
             fs.writeDir(assetsDir :: string)
             print(`Created directory "{assetsDir}".`)
         end
-    end,
+    end
 })

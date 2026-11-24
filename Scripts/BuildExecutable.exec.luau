@@ -38,7 +38,7 @@ function BuildExecutable.exec()
     Commandline.Toolkit.build({
         Name = OUTPUT_NAME,
         EntryPoint = "Source/AssetfileCli",
-        Target = target,
+        Target = target
     })
 
     const outputPath = `{PROJECT_ROOT}/Build/{OUTPUT_NAME}`

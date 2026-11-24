@@ -17,7 +17,7 @@ const CACHE_FILENAME = ".assetfile-cache.json"
 
 export type AssetEntry = {
     AssetId: string,
-    Hash: string,
+    Hash: string
 }
 
 export type AssetMap = {
@@ -26,7 +26,7 @@ export type AssetMap = {
     Remove: (self: AssetMap, relativePath: string) -> (),
     GetAll: (self: AssetMap) -> { [string]: AssetEntry },
     Save: (self: AssetMap) -> (),
-    WriteLuauModule: (self: AssetMap, outputPath: string) -> (),
+    WriteLuauModule: (self: AssetMap, outputPath: string) -> ()
 }
 
 const AssetMap = {}
@@ -49,7 +49,7 @@ function AssetMap.new(cacheDir: string): AssetMap
     const self = setmetatable({
         _entries = entries,
         _cachePath = cachePath,
-        _cacheDir = cacheDir,
+        _cacheDir = cacheDir
     }, AssetMap)
 
     return self
@@ -67,7 +67,7 @@ function AssetMap.Set(self: AssetMap, relativePath: string, assetId: string, has
 
     (self :: any)._entries[relativePath] = {
         AssetId = assetId,
-        Hash = hash,
+        Hash = hash
     }
 end
 
@@ -110,7 +110,7 @@ function AssetMap.WriteLuauModule(self: AssetMap, outputPath: string): ()
         "",
         "--]]",
         "",
-        "return {",
+        "return {"
     }
     for _, key in keys do
         const entry = entries[key]
