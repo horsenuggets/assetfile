@@ -154,6 +154,7 @@ return function()
             it("should show an error message for unknown commands", function()
                 const result = process.exec(BINARY_PATH, { "nonexistent" })
                 expect(result.stderr:find("Unknown subcommand")).to.be.ok()
+                expect(result.stdout:find("Unknown subcommand")).to.equal(nil)
             end)
         end)
 
